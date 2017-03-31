@@ -76,12 +76,10 @@ let Menu = (function() {
 
     let scrollSpeed = 0.5;
     let backgroundY = 0;
-    
 
     let canvas = document.getElementById('canvas');
     willDisplay();
     
-
     function handleMouseMove(event) {
         if(event.pageX || event.pageY == 0){
 			mouseX = event.pageX - this.offsetLeft;
@@ -163,6 +161,100 @@ let Menu = (function() {
         removeMouseMoveEvent: removeMouseMoveEvent,
         willDisplay: willDisplay,
         getSelection: getSelection,
+        leftShipImage: leftShipImage,
+        rightShipImage: rightShipImage
+    }
+}());
+
+function AnimateGameLoading(graphics) {
+    let self = {};
+    
+    self.finished = true;
+    self.leftShipPath = null;
+    self.rightShipPath = null;
+    let percent = 0;
+    let direction = 1;
+
+    self.create = function (leftShip, rightShip) {
+        self.leftShip = leftShip;
+        self.rightShip = rightShip;
+        self.finished = false;
+        console.log('created');
+        console.log(self.finished);
+        self.leftShipPath = {
+            startX: self.leftShip.x,
+            startY: self.leftShip.y,
+            endX: graphics.width / 2,
+            endY: graphics.height - 20
+        };
+
+        self.rightShipPath = {
+            startX: self.rightShip.x,
+            startY: self.rightShip.y,
+            endX: graphics.width / 2,
+            endY: graphics.height - 20
+        };
     }
 
-}());
+    self.update = function(elapsedTime) {
+
+        if (self.finished) {
+            return;
+        }
+
+        // elapsedTime /= 1000;
+        percent += direction;
+
+        let percentageComplete = percent / 100;
+        let leftShipXY = getLineXYAtPercent({
+            x: self.leftShipPath.startX,
+            y: self.leftShipPath.startY
+        }, {
+            x: self.leftShipPath.endX,
+            y: self.leftShipPath.endY
+        }, percentageComplete);
+
+        let rightShipXY = getLineXYAtPercent({
+            x: self.rightShipPath.startX,
+            y: self.rightShipPath.startY
+        }, {
+            x: self.rightShipPath.endX,
+            y: self.rightShipPath.endY
+        }, percentageComplete);
+
+        self.leftShip.x = leftShipXY.x - self.leftShip.width / 2;
+        self.leftShip.y = leftShipXY.y - self.leftShip.height / 2;
+
+        self.rightShip.x = rightShipXY.x - self.rightShip.width / 2;
+        self.rightShip.y = rightShipXY.y - self.rightShip.height / 2;
+
+        if (percent >= 100) {
+            self.finished = true;
+        }
+    }
+
+    self.render = function() {
+        if (self.finished) {
+            return;
+        }
+
+        graphics.drawLine(self.leftShipPath);
+        graphics.drawLine(self.rightShipPath);
+
+        graphics.drawImage(self.leftShip);
+        graphics.drawImage(self.rightShip);
+    }
+
+    function getLineXYAtPercent(startPt, endPt, percent) {
+        let dx = endPt.x - startPt.x;
+        let dy = endPt.y - startPt.y;
+        let X = startPt.x + dx * percent;
+        let Y = startPt.y + dy * percent;
+        return ({
+            x: X,
+            y: Y
+        });
+    }
+
+    return self;
+}

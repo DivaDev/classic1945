@@ -4,7 +4,7 @@ function Game(graphics) {
 
     self.initialize = function() {
         console.log('start game');
-        self.player = new Player();
+        self.player = new Player(graphics.width / 2, graphics.height - 20);
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
@@ -49,15 +49,19 @@ function Game(graphics) {
     return self;
 }
 
-function Player() {
+function Player(startX, startY) {
     let self = {};
     let movementSpeed = 4;
 
     self.image = new Image();
-    self.x = 50;
-    self.y = 50;
     self.width = 35;
     self.height = 40;
+    // self.x = startX;
+    // self.y = startY;
+    self.center = { x: startX - self.width / 2, y: startY - self.height / 2 };
+    self.x = self.center.x;
+    self.y = self.center.y;
+    
     self.image.src = "images/ship.png";
     self.willMoveUp = false;
     self.willMoveLeft = false;

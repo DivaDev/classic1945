@@ -18,8 +18,9 @@ let GameEngine = (function() {
     let graphics = Graphics;
     let menu = Menu;
     let game = new Game(graphics);
-
+    let scrollSpeed = 0.5;
     let timerInterval = 0;
+    let newGameAnimation = AnimateGameLoading(graphics);    
 
     let canvas = document.getElementById('canvas');
     canvas.addEventListener('click', function() {
@@ -30,11 +31,14 @@ let GameEngine = (function() {
         if (menu.getSelection() === GameStatus.PLAY) {
             status = GameStatus.PLAY;
             menu.removeMouseMoveEvent();
+            newGameAnimation = AnimateGameLoading(graphics);
+            newGameAnimation.create(menu.leftShipImage, menu.rightShipImage);
+            
             game.initialize();
         }        
     });
 
-    // canvas.addEventListener('keydown', onKeyDown);
+
     document.addEventListener('keyup', () => {
         if (event.keyCode === 27) { // esc
             menu.willDisplay();
@@ -52,10 +56,11 @@ let GameEngine = (function() {
         requestAnimationFrame(gameloop);
     }
 
-    let scrollSpeed = 0.5;
 
     function update(elapsedTime) {
+
         menu.update();
+        newGameAnimation.update(elapsedTime);
         if (status === GameStatus.PLAY) {
             game.update();
         }
@@ -70,10 +75,12 @@ let GameEngine = (function() {
     function render() {
         graphics.beginDrawing();
         menu.drawBackground();
-
+        newGameAnimation.render();
+        
         if (status == GameStatus.MENU) {
             menu.render();
-        } else if (status == GameStatus.PLAY) {
+        } else if (status == GameStatus.PLAY && newGameAnimation.finished) {
+            // render the game after new game animation has ended
             game.render();
         }
 

@@ -38,6 +38,14 @@ let Graphics = (function() {
         context.restore();
     }
 
+    function drawLine(specs) {
+        context.beginPath();
+        context.moveTo(specs.startX, specs.startY);
+        context.lineTo(specs.endX, specs.endY);
+        context.strokeStyle = 'red';
+        context.stroke();
+    }
+
     return {
         width: canvas.width,
         height: canvas.height,
@@ -45,6 +53,7 @@ let Graphics = (function() {
         clear: clear,
         drawImage: drawImage,
         drawSquare: drawSquare,
-        finishDraw: finishDraw
+        finishDraw: finishDraw,
+        drawLine: drawLine
     }
 }());
