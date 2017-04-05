@@ -57,7 +57,7 @@ function Game(graphics) {
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
-    }
+    };
 
     function handleKeyDown(event) {
         if (event.keyCode === 39) {
@@ -114,7 +114,7 @@ function Game(graphics) {
         } else {
             timerInterval += elapsedTime;
         }
-    }
+    };
 
 
     self.render = function() {
@@ -125,12 +125,12 @@ function Game(graphics) {
 
         enemies.forEach(function(enemy) {
             graphics.drawImage(enemy);
-        })
+        });
 
         // Play with
         graphics.drawBezierCurve(possiblePaths[0]);
         graphics.drawQuadraticCurve(possiblePaths[1]);
-    }
+    };
 
     return self;
 }
@@ -170,7 +170,7 @@ function Player(startX, startY) {
         willFireOnRight = !willFireOnRight;
 
         self.missiles.push(missile);
-    }
+    };
 
     self.update = function() {
         self.move();
@@ -186,7 +186,7 @@ function Player(startX, startY) {
         }
 
 
-    }
+    };
 
     self.move = function() {
         if (self.willMoveUp) {
@@ -204,9 +204,7 @@ function Player(startX, startY) {
         if (self.willMoveRight) {
             self.x += movementSpeed;
         }
-    }
-
-    self.move
+    };
 
     return self;
 }
@@ -222,7 +220,7 @@ function Missile(specs) {
 
     self.update = function() {
         self.y -= self.speed;
-    }
+    };
 
     return self;
 }
@@ -281,7 +279,7 @@ function Enemy(x, y, path) {
         }
 
         self.y += self.speed;
-    }
+    };
 
     return self;
 }
@@ -305,7 +303,7 @@ function getCubicBezierXYatPercent(startPt, controlPt1, controlPt2, endPt, perce
 }
 
 function CubicN(pct, a, b, c, d) {
-    var t2 = pct * pct;
-    var t3 = t2 * pct;
+    let t2 = pct * pct;
+    let t3 = t2 * pct;
     return a + (-a * 3 + pct * (3 * a - a * pct)) * pct + (3 * b + pct * (-6 * b + b * 3 * pct)) * pct + (c * 3 - c * 3 * pct) * t2 + d * t3;
 }

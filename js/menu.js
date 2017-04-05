@@ -65,7 +65,7 @@ let Menu = (function() {
         y: 10,
         width: 35,
         height: 40
-    }
+    };
     
     backgroundImage.image.src = "images/background.png";
     playImage.image.src = "images/play.png";
@@ -203,7 +203,7 @@ function AnimateGameLoading(graphics) {
             endX: graphics.width / 2,
             endY: graphics.height - 20
         };
-    }
+    };
 
     self.update = function(elapsedTime) {
 
@@ -239,7 +239,7 @@ function AnimateGameLoading(graphics) {
         if (percent >= 100) {
             self.finished = true;
         }
-    }
+    };
 
     self.render = function() {
         if (self.finished) {
@@ -251,7 +251,7 @@ function AnimateGameLoading(graphics) {
 
         graphics.drawImage(self.leftShip);
         graphics.drawImage(self.rightShip);
-    }
+    };
 
     function getLineXYAtPercent(startPt, endPt, percent) {
         let dx = endPt.x - startPt.x;
