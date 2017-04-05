@@ -46,6 +46,14 @@ let Graphics = (function() {
         context.stroke();
     }
 
+    function drawBezierCurve(specs) {
+        context.beginPath();
+        context.moveTo(specs.startX, specs.startY);
+        context.bezierCurveTo(specs.cp1x, specs.cp1y, specs.cp2x, specs.cp2y, specs.endX, specs.endY);
+        context.stroke();
+    }
+
+
     return {
         width: canvas.width,
         height: canvas.height,
@@ -54,6 +62,7 @@ let Graphics = (function() {
         drawImage: drawImage,
         drawSquare: drawSquare,
         finishDraw: finishDraw,
-        drawLine: drawLine
+        drawLine: drawLine,
+        drawBezierCurve: drawBezierCurve
     }
 }());

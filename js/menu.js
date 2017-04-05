@@ -3,7 +3,8 @@ let Menu = (function() {
     let graphics = Graphics;
 
     let buttonX = [192, 110, 149, 160];
-    let buttonY = [100, 140, 180, 220];
+    // let buttonY = [100, 140, 180, 220];
+    let buttonY = [graphics.height / 4 + 40, graphics.height / 4 + 80, graphics.height / 4 + 120, graphics.height / 4 + 160]
 
 	let mouseX;
 	let mouseY;
@@ -71,23 +72,31 @@ let Menu = (function() {
     instructionsImage.image.src = "images/instructions.png";
     settingsImage.image.src = "images/settings.png";
     creditsImage.image.src = "images/credits.png";
-    leftShipImage.image.src = "images/ship.png";
-    rightShipImage.image.src = "images/ship.png";
+    leftShipImage.image.src = "images/rsz_xwing.png";
+    rightShipImage.image.src = "images/rsz_xwing.png";
 
     let scrollSpeed = 0.5;
     let backgroundY = 0;
 
     let canvas = document.getElementById('canvas');
     willDisplay();
+
+    function  getMousePos(event) {
+        // http://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
+        let rect = canvas.getBoundingClientRect(), // abs. size of element
+            scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
+            scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+
+        return {
+            x: (event.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
+            y: (event.clientY - rect.top) * scaleY     // been adjusted to be relative to element
+        }
+    }
     
     function handleMouseMove(event) {
-        if(event.pageX || event.pageY == 0){
-			mouseX = event.pageX - this.offsetLeft;
-			mouseY = event.pageY - this.offsetTop;
-		} else if(event.offsetX || event.offsetY == 0){
-			mouseX = event.offsetX;
-			mouseY = event.offsetY;
-		}
+        let coord = getMousePos(event);
+        mouseX = coord.x;
+        mouseY = coord.y;
 
 		for(let i = 0; i < buttonX.length; i++){
 			if(mouseX > buttonX[i] && mouseX < buttonX[i] + buttonWidth[i]){
@@ -202,7 +211,6 @@ function AnimateGameLoading(graphics) {
             return;
         }
 
-        // elapsedTime /= 1000;
         percent += direction;
 
         let percentageComplete = percent / 100;

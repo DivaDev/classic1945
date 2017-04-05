@@ -62,7 +62,7 @@ let GameEngine = (function() {
         menu.update();
         newGameAnimation.update(elapsedTime);
         if (status === GameStatus.PLAY) {
-            game.update();
+            game.update(elapsedTime);
         }
 
         if (timerInterval > 1000) {
