@@ -53,7 +53,13 @@ let Graphics = (function() {
         context.stroke();
     }
 
-
+    function drawQuadraticCurve(specs) {
+        context.beginPath();
+        context.moveTo(specs.startX, specs.startY);
+        context.quadraticCurveTo(specs.cpx, specs.cpy, specs.endX, specs.endY);
+        context.stroke();
+    }
+    
     return {
         width: canvas.width,
         height: canvas.height,
@@ -63,6 +69,7 @@ let Graphics = (function() {
         drawSquare: drawSquare,
         finishDraw: finishDraw,
         drawLine: drawLine,
-        drawBezierCurve: drawBezierCurve
+        drawBezierCurve: drawBezierCurve,
+        drawQuadraticCurve: drawQuadraticCurve,
     }
 }());

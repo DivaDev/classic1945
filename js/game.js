@@ -1,7 +1,14 @@
+const PathTypes = {
+    BEZIER: 0,
+    LINE: 1,
+    QUAD: 2,
+};
+
 function Game(graphics) {
     let timerInterval = 0;
     let possiblePaths = [];
     let aroundTheMap = {
+        type: PathTypes.BEZIER,
         startX: 0,
         startY: 0,
         cp1x: graphics.width / 2,
@@ -11,7 +18,34 @@ function Game(graphics) {
         endX: graphics.width,
         endY: 0        
     };
+
+    let stuff = {
+        type: PathTypes.QUAD,
+        startX: 0,
+        startY: 0,
+        cpx: graphics.width / 2,
+        cpy: 200,
+        endX: graphics.width,
+        endY: 0
+    };
+
+    // let path = {
+    //     startPt: {
+    //         x: 200,
+    //         y: 160
+    //     },
+    //     controlPt: {
+    //         x: 230,
+    //         y: 200
+    //     },
+    //     endPt: {
+    //         x: 250,
+    //         y: 120
+    //     }
+    // }
+
     possiblePaths.push(aroundTheMap);
+    possiblePaths.push(stuff);
     let enemies = [];
     
     self = {};
@@ -74,21 +108,8 @@ function Game(graphics) {
         if (timerInterval > 1500) {
             timerInterval = 0;
             let randomX = Math.floor((Math.random() * graphics.width) + 5);
-            // let path = {
-            //     startPt: {
-            //         x: 200,
-            //         y: 160
-            //     },
-            //     controlPt: {
-            //         x: 230,
-            //         y: 200
-            //     },
-            //     endPt: {
-            //         x: 250,
-            //         y: 120
-            //     }
-            // }
-            enemies.push(new Enemy(randomX, -10, possiblePaths[0]));
+            
+            enemies.push(new Enemy(randomX, -10, possiblePaths[1]));
 
         } else {
             timerInterval += elapsedTime;
@@ -108,6 +129,7 @@ function Game(graphics) {
 
         // Play with
         graphics.drawBezierCurve(possiblePaths[0]);
+        graphics.drawQuadraticCurve(possiblePaths[1]);
     }
 
     return self;
@@ -212,42 +234,49 @@ function Enemy(x, y, path) {
     // self.x = x;
     // self.y = y;
     self.image = new Image();
-    self.image.src = "images/ship.png";
+    self.image.src = "images/rsz_tie_fighter.png";
     self.speed = 1;
     self.path = path;
     self.finished = false;
     self.x = self.path.startX;
     self.y = self.path.startY;
 
-    // ctx.beginPath();
-    // ctx.moveTo(200, 160);
-    // ctx.quadraticCurveTo(230, 200, 250, 120);
-    // ctx.strokeStyle = 'green';
-    // ctx.stroke();
-
     self.update = function() {
 
         percent += 1;
 
-        let percentComplete = percent / 100;
-        let bezierCoord = getCubicBezierXYatPercent({
+        let percentComplete = percent / 300;
+        // let bezierCoord = getCubicBezierXYatPercent({
+        //     x: self.path.startX,
+        //     y: self.path.startY
+        // }, {
+        //     x: self.path.cp1x,
+        //     y: self.path.cp1y
+        // }, {
+        //     x: self.path.cp2x,
+        //     y: self.path.cp2y
+        // }, {
+        //     x: self.path.endX,
+        //     y: self.path.endY
+        // }, percentComplete);
+
+        // self.x = bezierCoord.x;
+        // self.y = bezierCoord.y;
+        let quadCoord = getQuadraticBezierXYatPercent({
             x: self.path.startX,
             y: self.path.startY
         }, {
-            x: self.path.cp1x,
-            y: self.path.cp1y
-        }, {
-            x: self.path.cp2x,
-            y: self.path.cp2y
+            x: self.path.cpx,
+            y: self.path.cpy
         }, {
             x: self.path.endX,
             y: self.path.endY
         }, percentComplete);
 
-        self.x = bezierCoord.x;
-        self.y = bezierCoord.y;
+        self.x = quadCoord.x;
+        self.y = quadCoord.y;
 
-        if (percent >= 100) {
+        if (percent >= 300) {
             self.finished = true;
         }
 
