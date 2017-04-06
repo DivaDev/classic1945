@@ -69,7 +69,17 @@ function Game(graphics) {
         cpy: graphics.height / 2 + 25,
         endX: graphics.width / 2 + 25,
         endY: graphics.height
-    }
+    };
+
+    let leftToBottomMiddleOffset = {
+        type: PathTypes.QUAD,
+        startX: 0,
+        startY: 50,
+        cpx: graphics.width / 2 - 50,
+        cpy: graphics.height / 2 - 50,
+        endX: graphics.width / 2 - 50,
+        endY: graphics.height
+    };
 
     possiblePaths.push(aroundTheMapBezier);
     possiblePaths.push(aroundTheMapQuad);
@@ -77,6 +87,7 @@ function Game(graphics) {
     possiblePaths.push(rightCurveOut);
     possiblePaths.push(leftToBottomMiddle);
     possiblePaths.push(rightToBottomMiddle);
+    possiblePaths.push(leftToBottomMiddleOffset);
     let enemies = [];
     
     self = {};
@@ -163,6 +174,7 @@ function Game(graphics) {
         graphics.drawQuadraticCurve(possiblePaths[3]);
         graphics.drawQuadraticCurve(possiblePaths[4]);
         graphics.drawQuadraticCurve(possiblePaths[5]);
+        graphics.drawQuadraticCurve(possiblePaths[6]);
     };
 
     return self;
