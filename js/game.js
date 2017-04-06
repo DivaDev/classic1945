@@ -1,3 +1,5 @@
+'use strict';
+
 const PathTypes = {
     BEZIER: 0,
     LINE: 1,
@@ -7,7 +9,7 @@ const PathTypes = {
 function Game(graphics) {
     let timerInterval = 0;
     let possiblePaths = [];
-    let aroundTheMap = {
+    let aroundTheMapBezier = {
         type: PathTypes.BEZIER,
         startX: 0,
         startY: 0,
@@ -19,7 +21,7 @@ function Game(graphics) {
         endY: 0        
     };
 
-    let stuff = {
+    let aroundTheMapQuad = {
         type: PathTypes.QUAD,
         startX: 0,
         startY: 0,
@@ -29,23 +31,52 @@ function Game(graphics) {
         endY: 0
     };
 
-    // let path = {
-    //     startPt: {
-    //         x: 200,
-    //         y: 160
-    //     },
-    //     controlPt: {
-    //         x: 230,
-    //         y: 200
-    //     },
-    //     endPt: {
-    //         x: 250,
-    //         y: 120
-    //     }
-    // }
+    let leftCurveOut = {
+        type: PathTypes.QUAD,
+        startX: 0,
+        startY: 0,
+        cpx: graphics.width / 2,
+        cpy: graphics.height / 2,
+        endX: 0,
+        endY: graphics.height
+    };
 
-    possiblePaths.push(aroundTheMap);
-    possiblePaths.push(stuff);
+    let rightCurveOut = {
+        type: PathTypes.QUAD,
+        startX: graphics.width,
+        startY: 0,
+        cpx: graphics.width / 2,
+        cpy: graphics.height / 2,
+        endX: graphics.width,
+        endY: graphics.height
+    };
+
+    let leftToBottomMiddle = {
+        type: PathTypes.QUAD,
+        startX: 0,
+        startY: 0,
+        cpx: graphics.width / 2 - 25,
+        cpy: graphics.height / 2 - 25,
+        endX: graphics.width / 2 - 25,
+        endY: graphics.height
+    };
+
+    let rightToBottomMiddle = {
+        type: PathTypes.QUAD,
+        startX: graphics.width,
+        startY: 0,
+        cpx: graphics.width / 2 + 25,
+        cpy: graphics.height / 2 + 25,
+        endX: graphics.width / 2 + 25,
+        endY: graphics.height
+    }
+
+    possiblePaths.push(aroundTheMapBezier);
+    possiblePaths.push(aroundTheMapQuad);
+    possiblePaths.push(leftCurveOut);
+    possiblePaths.push(rightCurveOut);
+    possiblePaths.push(leftToBottomMiddle);
+    possiblePaths.push(rightToBottomMiddle);
     let enemies = [];
     
     self = {};
@@ -107,15 +138,13 @@ function Game(graphics) {
 
         if (timerInterval > 1500) {
             timerInterval = 0;
-            let randomX = Math.floor((Math.random() * graphics.width) + 5);
-            
-            enemies.push(new Enemy(randomX, -10, possiblePaths[1]));
+            // let randomX = Math.floor((Math.random() * graphics.width) + 5);
+            enemies.push(new Enemy(possiblePaths[4]));
 
         } else {
             timerInterval += elapsedTime;
         }
     };
-
 
     self.render = function() {
         graphics.drawImage(self.player);
@@ -130,6 +159,10 @@ function Game(graphics) {
         // Play with
         graphics.drawBezierCurve(possiblePaths[0]);
         graphics.drawQuadraticCurve(possiblePaths[1]);
+        graphics.drawQuadraticCurve(possiblePaths[2]);
+        graphics.drawQuadraticCurve(possiblePaths[3]);
+        graphics.drawQuadraticCurve(possiblePaths[4]);
+        graphics.drawQuadraticCurve(possiblePaths[5]);
     };
 
     return self;
@@ -184,8 +217,6 @@ function Player(startX, startY) {
                 self.missiles.splice(i, 1);
             }
         }
-
-
     };
 
     self.move = function() {
@@ -225,12 +256,9 @@ function Missile(specs) {
     return self;
 }
 
-function Enemy(x, y, path) {
+function Enemy(path) {
     let percent = 0;
     let self = {};
-
-    // self.x = x;
-    // self.y = y;
     self.image = new Image();
     self.image.src = "images/rsz_tie_fighter.png";
     self.speed = 1;
@@ -244,66 +272,79 @@ function Enemy(x, y, path) {
         percent += 1;
 
         let percentComplete = percent / 300;
-        // let bezierCoord = getCubicBezierXYatPercent({
-        //     x: self.path.startX,
-        //     y: self.path.startY
-        // }, {
-        //     x: self.path.cp1x,
-        //     y: self.path.cp1y
-        // }, {
-        //     x: self.path.cp2x,
-        //     y: self.path.cp2y
-        // }, {
-        //     x: self.path.endX,
-        //     y: self.path.endY
-        // }, percentComplete);
+        let coord = FollowPathSystem.update(self.path, percentComplete);
 
-        // self.x = bezierCoord.x;
-        // self.y = bezierCoord.y;
-        let quadCoord = getQuadraticBezierXYatPercent({
-            x: self.path.startX,
-            y: self.path.startY
-        }, {
-            x: self.path.cpx,
-            y: self.path.cpy
-        }, {
-            x: self.path.endX,
-            y: self.path.endY
-        }, percentComplete);
-
-        self.x = quadCoord.x;
-        self.y = quadCoord.y;
+        self.x = coord.x;
+        self.y = coord.y;
 
         if (percent >= 300) {
             self.finished = true;
         }
 
-        self.y += self.speed;
+        // self.y += self.speed;
     };
 
     return self;
 }
 
-function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
-    let x = Math.pow(1 - percent, 2) * startPt.x + 2 * (1 - percent) * percent * controlPt.x + Math.pow(percent, 2) * endPt.x;
-    let y = Math.pow(1 - percent, 2) * startPt.y + 2 * (1 - percent) * percent * controlPt.y + Math.pow(percent, 2) * endPt.y;
-    return ({
-        x: x,
-        y: y
-    });
-}
+let FollowPathSystem = (function() {
+    function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
+        let x = Math.pow(1 - percent, 2) * startPt.x + 2 * (1 - percent) * percent * controlPt.x + Math.pow(percent, 2) * endPt.x;
+        let y = Math.pow(1 - percent, 2) * startPt.y + 2 * (1 - percent) * percent * controlPt.y + Math.pow(percent, 2) * endPt.y;
+        return ({
+            x: x,
+            y: y
+        });
+    }
 
-function getCubicBezierXYatPercent(startPt, controlPt1, controlPt2, endPt, percent) {
-    let x = CubicN(percent, startPt.x, controlPt1.x, controlPt2.x, endPt.x);
-    let y = CubicN(percent, startPt.y, controlPt1.y, controlPt2.y, endPt.y);
-    return ({
-        x: x,
-        y: y
-    });
-}
+    function getCubicBezierXYatPercent(startPt, controlPt1, controlPt2, endPt, percent) {
+        let x = CubicN(percent, startPt.x, controlPt1.x, controlPt2.x, endPt.x);
+        let y = CubicN(percent, startPt.y, controlPt1.y, controlPt2.y, endPt.y);
+        return ({
+            x: x,
+            y: y
+        });
+    }
 
-function CubicN(pct, a, b, c, d) {
-    let t2 = pct * pct;
-    let t3 = t2 * pct;
-    return a + (-a * 3 + pct * (3 * a - a * pct)) * pct + (3 * b + pct * (-6 * b + b * 3 * pct)) * pct + (c * 3 - c * 3 * pct) * t2 + d * t3;
-}
+    function CubicN(pct, a, b, c, d) {
+        let t2 = pct * pct;
+        let t3 = t2 * pct;
+        return a + (-a * 3 + pct * (3 * a - a * pct)) * pct + (3 * b + pct * (-6 * b + b * 3 * pct)) * pct + (c * 3 - c * 3 * pct) * t2 + d * t3;
+    }
+
+    function update(path, percentComplete) {
+        if (path.type === PathTypes.BEZIER) {
+            return getCubicBezierXYatPercent({
+                x: path.startX,
+                y: path.startY
+            }, {
+                x: path.cp1x,
+                y: path.cp1y
+            }, {
+                x: path.cp2x,
+                y: path.cp2y
+            }, {
+                x: path.endX,
+                y: path.endY
+            }, percentComplete);
+        }
+
+        if (path.type === PathTypes.QUAD) {
+            return getQuadraticBezierXYatPercent({
+                x: path.startX,
+                y: path.startY
+            }, {
+                x: path.cpx,
+                y: path.cpy
+            }, {
+                x: path.endX,
+                y: path.endY
+            }, percentComplete);
+        }
+    }
+
+    return {
+        update: update
+    }
+
+}());
