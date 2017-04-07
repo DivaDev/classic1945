@@ -137,6 +137,8 @@ function Game(graphics) {
     self.update = function(elapsedTime) {
         self.player.update(enemies);
 
+        CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
+
         enemies.forEach(function(enemy) {
             enemy.update();
         });
@@ -258,32 +260,13 @@ function Missile(specs) {
     self.y = specs.y;
     self.width = specs.width;
     self.height = specs.height;
-    self.collisionBox ={x: self.x, y: self.y, width: self.width, height: self.height};
     self.color = "#009900";
     self.speed = 4;
 
     self.update = function(listOfEnemies) {
         self.y -= self.speed;
-
-        for(let i = 0; i < listOfEnemies.length; i++){
-            self.checkForCollision( self.collisionBox, listOfEnemies[i].hitZone); //would be more efficient if we were to implement a quad-tree TODO change this
-        }
-
     };
-
-    self.checkForCollision = function(box1, box2){
-
-        //https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
-        if(box1.x <= (box2.x + box2.width) && box2.x <= (box1.x + box1.width) && box1.y <= (box2.y + box2.height) && box2.y <= (box1.y + box1.height)){
-
-            //collision detected!
-            console.log("Enemy hit!");
-            return true;
-        }
-
-        return false;
-    };
-
+    
     return self;
 }
 
@@ -297,7 +280,8 @@ function Enemy(path) {
     self.finished = false;
     self.x = self.path.startX;
     self.y = self.path.startY;
-    self.hitZone = {x: self.x - 10, y: self.y, width: 20, height: 20};
+    self.width = 35; // image width
+    self.height = 30; // image height
 
     self.update = function() {
 
@@ -313,7 +297,6 @@ function Enemy(path) {
             self.finished = true;
         }
 
-        // self.y += self.speed;
     };
 
     return self;
@@ -378,5 +361,45 @@ let FollowPathSystem = (function() {
     return {
         update: update
     }
+
+}());
+
+let CollisionSystem = (function() {
+
+    function didMissilesHitEnemy(enemies, missiles) {
+
+        if (enemies.length === 0 || missiles.length === 0) {
+            return;
+        }
+
+        // enemies.forEach(function(enemy) {
+        //     missiles.forEach(function(missile) {
+        //         if (willCollide(enemy, missile)) {
+        //             debugger;
+        //         }
+        //     });
+        // });
+        let tempEnemies = enemies;
+        for (let i = 0; i < tempEnemies.length; i++) {
+
+            for (let j = 0; j < missiles.length; j++) {
+                if (willCollide(enemies[i], missiles[j])) {
+                    enemies.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    }
+
+    function willCollide(enemy, missile) {
+        if(enemy.x <= (missile.x + missile.width) && missile.x <= (enemy.x + enemy.width) && enemy.y <= (missile.y + missile.height) && missile.y <= (enemy.y + enemy.height - 10)){
+            return true;
+        }
+        return false;
+    }
+
+    return {
+        didMissilesHitEnemy: didMissilesHitEnemy
+    };
 
 }());
