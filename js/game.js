@@ -135,7 +135,7 @@ function Game(graphics) {
     }
 
     self.update = function(elapsedTime) {
-        self.player.update();
+        self.player.update(enemies);
 
         enemies.forEach(function(enemy) {
             enemy.update();
@@ -217,12 +217,12 @@ function Player(startX, startY) {
         self.missiles.push(missile);
     };
 
-    self.update = function() {
+    self.update = function(listOfEnemies) { //this is not good practice because I'm having to pass in the list of enemies to the player, and then to each missile. TODO change this
         self.move();
 
         let missiles = self.missiles;
         for (let i = 0; i < missiles.length; i++) {
-            missiles[i].update();
+            missiles[i].update(listOfEnemies);
 
             if (missiles[i].y < 0) {
                 // Remove missile when off the screen
@@ -258,11 +258,30 @@ function Missile(specs) {
     self.y = specs.y;
     self.width = specs.width;
     self.height = specs.height;
+    self.collisionBox ={x: self.x, y: self.y, width: self.width, height: self.height};
     self.color = "#009900";
     self.speed = 4;
 
-    self.update = function() {
+    self.update = function(listOfEnemies) {
         self.y -= self.speed;
+
+        for(let i = 0; i < listOfEnemies.length; i++){
+            self.checkForCollision( self.collisionBox, listOfEnemies[i].hitZone); //would be more efficient if we were to implement a quad-tree TODO change this
+        }
+
+    };
+
+    self.checkForCollision = function(box1, box2){
+
+        //https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection
+        if(box1.x <= (box2.x + box2.width) && box2.x <= (box1.x + box1.width) && box1.y <= (box2.y + box2.height) && box2.y <= (box1.y + box1.height)){
+
+            //collision detected!
+            console.log("Enemy hit!");
+            return true;
+        }
+
+        return false;
     };
 
     return self;
@@ -278,6 +297,7 @@ function Enemy(path) {
     self.finished = false;
     self.x = self.path.startX;
     self.y = self.path.startY;
+    self.hitZone = {x: self.x - 10, y: self.y, width: 20, height: 20};
 
     self.update = function() {
 
