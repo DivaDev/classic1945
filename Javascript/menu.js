@@ -112,22 +112,22 @@ let Menu = (function() {
 
     function getSelection() {
         
-        if (leftShipImage.y == buttonY[0] + 2) {
+        if (leftShipImage.y === buttonY[0] + 2) {
             console.log("Clicked play");
             return GameStatus.PLAY;
         }
 
-        if (leftShipImage.y == buttonY[1] + 2) {
+        if (leftShipImage.y === buttonY[1] + 2) {
             console.log("Clicked Instructions");
             return GameStatus.INSTRUCTIONS;
         }
 
-        if (leftShipImage.y == buttonY[2] + 2) {
+        if (leftShipImage.y === buttonY[2] + 2) {
             console.log("Clicked Settings");
             return GameStatus.SETTINGS;
         }
 
-        if (leftShipImage.y == buttonY[3] + 2) {
+        if (leftShipImage.y === buttonY[3] + 2) {
             console.log("Cliked Credits");
             return GameStatus.CREDITS;
         }
@@ -144,7 +144,7 @@ let Menu = (function() {
     function update() {
         backgroundY -= scrollSpeed;
 
-        if(backgroundY == -1 * graphics.height){
+        if(backgroundY === -1 * graphics.height){
             backgroundY = 0;
         }
         backgroundImage.y = backgroundY;
@@ -246,8 +246,8 @@ function AnimateGameLoading(graphics) {
             return;
         }
 
-        graphics.drawLine(self.leftShipPath);
-        graphics.drawLine(self.rightShipPath);
+        // graphics.drawLine(self.leftShipPath);
+        // graphics.drawLine(self.rightShipPath);
 
         graphics.drawImage(self.leftShip);
         graphics.drawImage(self.rightShip);
