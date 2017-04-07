@@ -7,8 +7,15 @@ const PathTypes = {
 };
 
 function Game(graphics) {
+    let self = {};
+    let enemies = [];
+    let sendEnemies = false;
+    let chosenPath = 0;
+    let countLaunchedEnemies  = 0;
     let timerInterval = 0;
+    let localInterval = 0;
     let possiblePaths = [];
+
     let aroundTheMapBezier = {
         type: PathTypes.BEZIER,
         startX: 0,
@@ -88,9 +95,8 @@ function Game(graphics) {
     possiblePaths.push(leftToBottomMiddle);
     possiblePaths.push(rightToBottomMiddle);
     possiblePaths.push(leftToBottomMiddleOffset);
-    let enemies = [];
-    
-    self = {};
+
+
     self.player = null;
 
     self.initialize = function() {
@@ -147,16 +153,30 @@ function Game(graphics) {
             return !enemy.finished;  // Keep the non finished
         });
 
-        console.log(enemies.length);
-
-        if (timerInterval > 1500) {
+        if (timerInterval > 3000) {
             timerInterval = 0;
-            // let randomX = Math.floor((Math.random() * graphics.width) + 5);
-            enemies.push(new Enemy(possiblePaths[4]));
-
+            sendEnemies = true;
+            chosenPath = Math.floor((Math.random() * possiblePaths.length));
         } else {
             timerInterval += elapsedTime;
+            localInterval += elapsedTime;
         }
+
+        if(sendEnemies){
+
+            if(localInterval > 350){
+                localInterval = 0;
+                countLaunchedEnemies++;
+                enemies.push(new Enemy(possiblePaths[chosenPath]));
+            }
+
+            if(countLaunchedEnemies > 3){
+                sendEnemies = false;
+                countLaunchedEnemies = 0;
+            }
+
+        }
+
     };
 
     self.render = function() {
@@ -382,9 +402,12 @@ let CollisionSystem = (function() {
         let tempEnemies = enemies;
         for (let i = 0; i < tempEnemies.length; i++) {
 
-            for (let j = 0; j < missiles.length; j++) {
+            let tempMissiles = missiles;
+
+            for (let j = 0; j < tempMissiles.length; j++) {
                 if (willCollide(enemies[i], missiles[j])) {
                     enemies.splice(i, 1);
+                    missiles.splice(j, 1);
                     break;
                 }
             }
