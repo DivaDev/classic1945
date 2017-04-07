@@ -67,13 +67,13 @@ let Menu = (function() {
         height: 40
     };
     
-    backgroundImage.image.src = "images/background.png";
-    playImage.image.src = "images/play.png";
-    instructionsImage.image.src = "images/instructions.png";
-    settingsImage.image.src = "images/settings.png";
-    creditsImage.image.src = "images/credits.png";
-    leftShipImage.image.src = "images/rsz_xwing.png";
-    rightShipImage.image.src = "images/rsz_xwing.png";
+    backgroundImage.image.src = "Images/background.png";
+    playImage.image.src = "Images/play.png";
+    instructionsImage.image.src = "Images/instructions.png";
+    settingsImage.image.src = "Images/settings.png";
+    creditsImage.image.src = "Images/credits.png";
+    leftShipImage.image.src = "Images/rsz_xwing.png";
+    rightShipImage.image.src = "Images/rsz_xwing.png";
 
     let scrollSpeed = 0.5;
     let backgroundY = 0;
