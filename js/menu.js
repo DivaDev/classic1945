@@ -57,7 +57,7 @@ let Menu = (function() {
         y: 10,  
         width: 35,
         height: 40
-    }
+    };
 
     let rightShipImage = {
         image: new Image(),

@@ -16,7 +16,7 @@ function Game(graphics) {
     let localInterval = 0;
     let possiblePaths = [];
 
-    let aroundTheMapBezier = {
+    const aroundTheMapBezier = {
         type: PathTypes.BEZIER,
         startX: 0,
         startY: 0,
@@ -28,7 +28,7 @@ function Game(graphics) {
         endY: 0        
     };
 
-    let aroundTheMapQuad = {
+    const aroundTheMapQuad = {
         type: PathTypes.QUAD,
         startX: 0,
         startY: 0,
@@ -38,7 +38,7 @@ function Game(graphics) {
         endY: 0
     };
 
-    let leftCurveOut = {
+    const leftCurveOut = {
         type: PathTypes.QUAD,
         startX: 0,
         startY: 0,
@@ -48,7 +48,7 @@ function Game(graphics) {
         endY: graphics.height
     };
 
-    let rightCurveOut = {
+    const rightCurveOut = {
         type: PathTypes.QUAD,
         startX: graphics.width,
         startY: 0,
@@ -58,7 +58,7 @@ function Game(graphics) {
         endY: graphics.height
     };
 
-    let leftToBottomMiddle = {
+    const leftToBottomMiddle = {
         type: PathTypes.QUAD,
         startX: 0,
         startY: 0,
@@ -68,7 +68,7 @@ function Game(graphics) {
         endY: graphics.height
     };
 
-    let rightToBottomMiddle = {
+    const rightToBottomMiddle = {
         type: PathTypes.QUAD,
         startX: graphics.width,
         startY: 0,
@@ -78,7 +78,7 @@ function Game(graphics) {
         endY: graphics.height
     };
 
-    let leftToBottomMiddleOffset = {
+    const leftToBottomMiddleOffset = {
         type: PathTypes.QUAD,
         startX: 0,
         startY: 50,
@@ -95,7 +95,6 @@ function Game(graphics) {
     possiblePaths.push(leftToBottomMiddle);
     possiblePaths.push(rightToBottomMiddle);
     possiblePaths.push(leftToBottomMiddleOffset);
-
 
     self.player = null;
 
@@ -114,15 +113,14 @@ function Game(graphics) {
             self.player.willMoveLeft = true;
         }
 
-        if (event.keyCode == 40) {
+        if (event.keyCode === 40) {
             self.player.willMoveDown = true;
-        } else if (event.keyCode == 38) {
+        } else if (event.keyCode === 38) {
             self.player.willMoveUp = true;
         }
     }
 
     function handleKeyUp(event) {
-        console.log(event.keyCode);
         if (event.keyCode === 39) {
             self.player.willMoveRight = false;
         } else if (event.keyCode === 37) {
@@ -131,22 +129,23 @@ function Game(graphics) {
 
         if (event.keyCode === 40) {
             self.player.willMoveDown = false;
-        } else if (event.keyCode == 38) {
+        } else if (event.keyCode === 38) {
             self.player.willMoveUp = false;
         }
 
         if (event.keyCode === 32) { // space
             self.player.fire();
+            SoundSystem.play('audio/XWing-Laser');
         }
     }
 
     self.update = function(elapsedTime) {
-        self.player.update(enemies);
+        self.player.update();
 
         CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
 
         enemies.forEach(function(enemy) {
-            enemy.update();
+            enemy.update(self.player);
         });
 
         enemies = enemies.filter(function(enemy) {
@@ -174,9 +173,7 @@ function Game(graphics) {
                 sendEnemies = false;
                 countLaunchedEnemies = 0;
             }
-
         }
-
     };
 
     self.render = function() {
@@ -187,16 +184,19 @@ function Game(graphics) {
 
         enemies.forEach(function(enemy) {
             graphics.drawImage(enemy);
+            enemy.missiles.forEach(function(missile) {
+                graphics.drawSquare(missile);
+            })
         });
 
         // Play with
-        graphics.drawBezierCurve(possiblePaths[0]);
-        graphics.drawQuadraticCurve(possiblePaths[1]);
-        graphics.drawQuadraticCurve(possiblePaths[2]);
-        graphics.drawQuadraticCurve(possiblePaths[3]);
-        graphics.drawQuadraticCurve(possiblePaths[4]);
-        graphics.drawQuadraticCurve(possiblePaths[5]);
-        graphics.drawQuadraticCurve(possiblePaths[6]);
+        // graphics.drawBezierCurve(possiblePaths[0]);
+        // graphics.drawQuadraticCurve(possiblePaths[1]);
+        // graphics.drawQuadraticCurve(possiblePaths[2]);
+        // graphics.drawQuadraticCurve(possiblePaths[3]);
+        // graphics.drawQuadraticCurve(possiblePaths[4]);
+        // graphics.drawQuadraticCurve(possiblePaths[5]);
+        // graphics.drawQuadraticCurve(possiblePaths[6]);
     };
 
     return self;
@@ -222,12 +222,12 @@ function Player(startX, startY) {
     let willFireOnRight = true;
 
     self.fire = function() {
-        let missile = new Missile({
+        let missile = new PlayerMissile({
             x: self.x + 2,
             y: self.y,
             width: 3,
             height: 15,
-            color: "#AABBCC",
+            color: "#990000",
         });
 
         if (willFireOnRight) {
@@ -235,16 +235,15 @@ function Player(startX, startY) {
         }
 
         willFireOnRight = !willFireOnRight;
-
         self.missiles.push(missile);
     };
 
-    self.update = function(listOfEnemies) { //this is not good practice because I'm having to pass in the list of enemies to the player, and then to each missile. TODO change this
+    self.update = function() {
         self.move();
 
         let missiles = self.missiles;
         for (let i = 0; i < missiles.length; i++) {
-            missiles[i].update(listOfEnemies);
+            missiles[i].update();
 
             if (missiles[i].y < 0) {
                 // Remove missile when off the screen
@@ -280,13 +279,44 @@ function Missile(specs) {
     self.y = specs.y;
     self.width = specs.width;
     self.height = specs.height;
-    self.color = "#009900";
+    self.color = specs.color;
     self.speed = 4;
 
-    self.update = function(listOfEnemies) {
+    self.update = function() {};
+
+    return self;
+}
+
+function PlayerMissile(specs) {
+    let self = Missile(specs); // 'inherit' from Missile
+
+    self.update = function() {
         self.y -= self.speed;
     };
-    
+
+    return self;
+}
+
+function EnemyMissile(specs, path) {
+    let self = Missile(specs);
+    self.path = path;
+    let percent = 0;
+
+    self.update = function() {
+        // self.y -= self.speed;
+
+        percent += 1;
+
+        let percentageComplete = percent / 100;
+        let coord = FollowPathSystem.update(self.path, percentageComplete);
+        self.x = coord.x;
+        self.y = coord.y;
+
+        if (percent >= 100) {
+            self.finished = true;
+        }
+    };
+
     return self;
 }
 
@@ -302,9 +332,50 @@ function Enemy(path) {
     self.y = self.path.startY;
     self.width = 35; // image width
     self.height = 30; // image height
+    self.missiles = [];
 
-    self.update = function() {
+    self.fire = function(player) {
+        let missile = new EnemyMissile({
+            x: self.x + 2,
+            y: self.y,
+            width: 3,
+            height: 15,
+            color: "#009900",
+        }, {
+            type: PathTypes.LINE,
+            startX: self.x,
+            startY: self.y,
+            endX: player.x,
+            endY: player.y
+        });
 
+        self.missiles.push(missile);
+    };
+
+    self.update = function(player) {
+        move();
+
+        let percentComplete = percent / 300;
+
+        if (!hasFired && percentComplete > .5) {
+            self.fire(player);
+            hasFired = true;
+        }
+
+        let missiles = self.missiles;
+        for (let i = 0; i < missiles.length; i++) {
+            missiles[i].update();
+
+            if (missiles[i].y < 0) {
+                // Remove missile when off the screen
+                self.missiles.splice(i, 1);
+            }
+        }
+    };
+
+    let hasFired = false;
+
+    function move() {
         percent += 1;
 
         let percentComplete = percent / 300;
@@ -316,8 +387,7 @@ function Enemy(path) {
         if (percent >= 300) {
             self.finished = true;
         }
-
-    };
+    }
 
     return self;
 }
@@ -376,6 +446,27 @@ let FollowPathSystem = (function() {
                 y: path.endY
             }, percentComplete);
         }
+
+        if (path.type === PathTypes.LINE) {
+            return getLineXYAtPercent({
+                x: path.startX,
+                y: path.startY
+            }, {
+                x: path.endX,
+                y: path.endY
+            }, percentComplete);
+        }
+    }
+
+    function getLineXYAtPercent(startPt, endPt, percent) {
+        let dx = endPt.x - startPt.x;
+        let dy = endPt.y - startPt.y;
+        let X = startPt.x + dx * percent;
+        let Y = startPt.y + dy * percent;
+        return ({
+            x: X,
+            y: Y
+        });
     }
 
     return {
@@ -392,13 +483,6 @@ let CollisionSystem = (function() {
             return;
         }
 
-        // enemies.forEach(function(enemy) {
-        //     missiles.forEach(function(missile) {
-        //         if (willCollide(enemy, missile)) {
-        //             debugger;
-        //         }
-        //     });
-        // });
         let tempEnemies = enemies;
         for (let i = 0; i < tempEnemies.length; i++) {
 
@@ -415,7 +499,7 @@ let CollisionSystem = (function() {
     }
 
     function willCollide(enemy, missile) {
-        if(enemy.x <= (missile.x + missile.width) && missile.x <= (enemy.x + enemy.width) && enemy.y <= (missile.y + missile.height) && missile.y <= (enemy.y + enemy.height - 10)){
+        if (enemy.x <= (missile.x + missile.width) && missile.x <= (enemy.x + enemy.width) && enemy.y <= (missile.y + missile.height) && missile.y <= (enemy.y + enemy.height - 10)){
             return true;
         }
         return false;
@@ -425,4 +509,31 @@ let CollisionSystem = (function() {
         didMissilesHitEnemy: didMissilesHitEnemy
     };
 
+}());
+
+let SoundSystem = (function() {
+    let sounds = {};
+
+    function loadSound(source) {
+        let sound = new Audio();
+        sound.src = source;
+        return sound;
+    }
+
+    function loadAudio() {
+        sounds['audio/XWing-Laser'] = loadSound('audio/XWing-Laser.wav');
+        console.log('Sound Initialized');
+    }
+
+    function play(sound) {
+        // sounds[sound].play();
+        let audio = loadSound('audio/XWing-Laser.wav');
+        audio.play();
+    }
+
+    // loadAudio();
+
+    return {
+        play: play,
+    }
 }());
