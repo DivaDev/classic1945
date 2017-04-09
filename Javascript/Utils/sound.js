@@ -14,7 +14,7 @@ let SoundSystem = (function() {
 
     function play(sound) {
         // sounds[sound].play();
-        let audio = loadSound('audio/XWing-Laser.wav');
+        let audio = loadSound(sound);
         audio.play();
     }
 

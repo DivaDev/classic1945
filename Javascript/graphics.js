@@ -27,9 +27,14 @@ let Graphics = (function() {
     function drawSquare(spec) {
         context.save();
         context.beginPath();
-        context.rect(spec.x, spec.y, spec.width, spec.height);
-        context.fillStyle = spec.color;
         context.fill();
+        context.fillStyle = spec.color;
+        context.translate(spec.x + spec.width / 2, spec.y + spec.height / 2);
+        let angle = Math.atan((spec.path.endY - spec.path.startY) / (spec.path.endX - spec.path.startX));
+        angle += 90 / 180 * Math.PI; // Need to add a multiple of 90 degrees
+        context.rotate(angle);
+        context.translate(-(spec.x + spec.width / 2),-(spec.y + spec.height / 2));
+        context.fillRect(spec.x, spec.y, spec.width, spec.height);
         context.restore();
     }
 
@@ -57,9 +62,10 @@ let Graphics = (function() {
         context.beginPath();
         context.moveTo(specs.startX, specs.startY);
         context.quadraticCurveTo(specs.cpx, specs.cpy, specs.endX, specs.endY);
+        context.strokeStyle = 'red';
         context.stroke();
     }
-    
+
     return {
         width: canvas.width,
         height: canvas.height,

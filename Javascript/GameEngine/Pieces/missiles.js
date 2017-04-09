@@ -15,6 +15,13 @@ function Missile(specs) {
 
 function PlayerMissile(specs) {
     let self = Missile(specs); // 'inherit' from Missile
+    self.path = {
+        type: PathTypes.LINE,
+        startX: self.x,
+        startY: self.y,
+        endX: self.x,
+        endY: 0
+    };
 
     self.update = function () {
         self.y -= self.speed;
@@ -29,8 +36,7 @@ function EnemyMissile(specs, path) {
     let percent = 0;
 
     self.update = function () {
-// self.y -= self.speed;
-
+        // self.y -= self.speed;
         percent += 1;
 
         let percentageComplete = percent / 100;

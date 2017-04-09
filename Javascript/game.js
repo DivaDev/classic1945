@@ -135,7 +135,7 @@ function Game(graphics) {
 
         if (event.keyCode === 32) { // space
             self.player.fire();
-            SoundSystem.play('audio/XWing-Laser');
+            SoundSystem.play('audio/XWing-Laser.wav');
         }
     }
 
@@ -156,6 +156,7 @@ function Game(graphics) {
             timerInterval = 0;
             sendEnemies = true;
             chosenPath = Math.floor((Math.random() * possiblePaths.length));
+            SoundSystem.play('audio/TIE-Fly2.wav');
         } else {
             timerInterval += elapsedTime;
             localInterval += elapsedTime;
@@ -186,23 +187,35 @@ function Game(graphics) {
             graphics.drawImage(enemy);
             enemy.missiles.forEach(function (missile) {
                 graphics.drawSquare(missile);
-            })
+                graphics.drawLine(missile.path);
+            });
+
         });
 
-// Play with
-// graphics.drawBezierCurve(possiblePaths[0]);
-// graphics.drawQuadraticCurve(possiblePaths[1]);
-// graphics.drawQuadraticCurve(possiblePaths[2]);
-// graphics.drawQuadraticCurve(possiblePaths[3]);
-// graphics.drawQuadraticCurve(possiblePaths[4]);
-// graphics.drawQuadraticCurve(possiblePaths[5]);
-// graphics.drawQuadraticCurve(possiblePaths[6]);
+        // Play with
+        graphics.drawBezierCurve(possiblePaths[0]);
+        graphics.drawQuadraticCurve(possiblePaths[1]);
+        graphics.drawQuadraticCurve(possiblePaths[2]);
+        graphics.drawQuadraticCurve(possiblePaths[3]);
+        graphics.drawQuadraticCurve(possiblePaths[4]);
+        graphics.drawQuadraticCurve(possiblePaths[5]);
+        graphics.drawQuadraticCurve(possiblePaths[6]);
     };
 
     return self;
 }
 
+let AnimationSystem = (function() {
 
+    function tieFighterExplosion(tieFighter) {
+        console.log('render explosion');
+    }
+
+    return {
+        tieFighterExplosion: tieFighterExplosion
+    }
+
+}());
 
 
 

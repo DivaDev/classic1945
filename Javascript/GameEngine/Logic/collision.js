@@ -13,6 +13,7 @@ let CollisionSystem = (function() {
 
             for (let j = 0; j < tempMissiles.length; j++) {
                 if (willCollide(enemies[i], missiles[j])) {
+                    AnimationSystem.tieFighterExplosion(enemies[i]);
                     enemies.splice(i, 1);
                     missiles.splice(j, 1);
                     break;
