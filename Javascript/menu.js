@@ -76,7 +76,7 @@ let Menu = (function() {
     rightShipImage.image.src = "Images/rsz_xwing.png";
 
     let scrollSpeed = 0.5;
-    let backgroundY = 0;
+    let backgroundY = -1 * graphics.height;
 
     let canvas = document.getElementById('canvas');
     willDisplay();
@@ -142,11 +142,16 @@ let Menu = (function() {
     }
 
     function update() {
-        backgroundY -= scrollSpeed;
+        backgroundY += scrollSpeed;
 
-        if(backgroundY === -1 * graphics.height){
-            backgroundY = 0;
+        // if(backgroundY === -1 * graphics.height){
+        //     backgroundY = 0;
+        // }
+
+        if (backgroundY > 0) {
+            backgroundY = -1 * graphics.height;
         }
+
         backgroundImage.y = backgroundY;
     }
 

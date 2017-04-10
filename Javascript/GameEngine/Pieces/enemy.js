@@ -23,8 +23,8 @@ function Enemy(path) {
             type: PathTypes.LINE,
             startX: self.x,
             startY: self.y,
-            endX: player.x,
-            endY: player.y
+            endX: player.x + player.width / 2,
+            endY: player.y + player.height / 2
         });
 
         self.missiles.push(missile);
