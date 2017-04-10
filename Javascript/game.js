@@ -140,6 +140,7 @@ function Game(graphics) {
     }
 
     self.update = function (elapsedTime) {
+
         self.player.update();
 
         CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
@@ -162,6 +163,8 @@ function Game(graphics) {
             localInterval += elapsedTime;
         }
 
+        AnimationSystem.update(elapsedTime);
+
         if (sendEnemies) {
 
             if (localInterval > 350) {
@@ -178,6 +181,7 @@ function Game(graphics) {
     };
 
     self.render = function () {
+        AnimationSystem.render();
         graphics.drawImage(self.player);
         self.player.missiles.forEach(function (missile) {
             graphics.drawSquare(missile);
@@ -187,19 +191,19 @@ function Game(graphics) {
             graphics.drawImage(enemy);
             enemy.missiles.forEach(function (missile) {
                 graphics.drawSquare(missile);
-                graphics.drawLine(missile.path);
+                // graphics.drawLine(missile.path);
             });
 
         });
 
         // Play with
-        graphics.drawBezierCurve(possiblePaths[0]);
-        graphics.drawQuadraticCurve(possiblePaths[1]);
-        graphics.drawQuadraticCurve(possiblePaths[2]);
-        graphics.drawQuadraticCurve(possiblePaths[3]);
-        graphics.drawQuadraticCurve(possiblePaths[4]);
-        graphics.drawQuadraticCurve(possiblePaths[5]);
-        graphics.drawQuadraticCurve(possiblePaths[6]);
+        // graphics.drawBezierCurve(possiblePaths[0]);
+        // graphics.drawQuadraticCurve(possiblePaths[1]);
+        // graphics.drawQuadraticCurve(possiblePaths[2]);
+        // graphics.drawQuadraticCurve(possiblePaths[3]);
+        // graphics.drawQuadraticCurve(possiblePaths[4]);
+        // graphics.drawQuadraticCurve(possiblePaths[5]);
+        // graphics.drawQuadraticCurve(possiblePaths[6]);
     };
 
     return self;
@@ -207,12 +211,59 @@ function Game(graphics) {
 
 let AnimationSystem = (function() {
 
+    let animationList = [];
     function tieFighterExplosion(tieFighter) {
-        console.log('render explosion');
+
+        let sprite = {
+            image: new Image(),
+            x: tieFighter.x - 128,
+            y: tieFighter.y - 128,
+            i: 0,
+            interval: 0,
+        };
+        sprite.image.src = "images/explosion/explosion0000.png";
+
+        animationList.push(sprite);
+    }
+
+    function update(elapsedTime) {
+        let tempList = animationList;
+        for (let i = 0; i < tempList.length; i++) {
+
+            if (tempList[i].interval < 10) {
+                tempList[i].interval += elapsedTime;
+                continue;
+            }
+            tempList[i].interval = 0;
+
+            if (tempList[i].i < 10) {
+                animationList[i].image.src = "images/explosion/explosion000" + animationList[i].i + ".png";
+            } else if (tempList[i].i < 100) {
+                animationList[i].image.src = "images/explosion/explosion00" + animationList[i].i + ".png";
+            } else if (tempList[i].i < 155) {
+                animationList[i].image.src = "images/explosion/explosion0" + animationList[i].i + ".png";
+            } else {
+                animationList[i].i = -1;
+            }
+
+            if (animationList[i].i < 0) {
+                animationList.splice(i, 1);
+            } else {
+                animationList[i].i += 1;
+            }
+        }
+    }
+
+    function render() {
+        animationList.forEach(function (sprite) {
+            Graphics.drawImage(sprite);
+        })
     }
 
     return {
-        tieFighterExplosion: tieFighterExplosion
+        tieFighterExplosion: tieFighterExplosion,
+        update: update,
+        render: render,
     }
 
 }());
