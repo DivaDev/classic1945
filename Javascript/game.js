@@ -157,7 +157,7 @@ function Game(graphics) {
             timerInterval = 0;
             sendEnemies = true;
             chosenPath = Math.floor((Math.random() * possiblePaths.length));
-            SoundSystem.play('audio/TIE-Fly2.wav');
+            // SoundSystem.play('audio/TIE-Fly2.wav');
         } else {
             timerInterval += elapsedTime;
             localInterval += elapsedTime;
@@ -226,31 +226,44 @@ let AnimationSystem = (function() {
         animationList.push(sprite);
     }
 
+    let explosionImages = [];
+
+    function loadExplosions() {
+        for (let i = 0; i < 155; i++) {
+            explosionImages.push(new Image());
+
+            if (i < 10) {
+                explosionImages[i].src = "images/explosion/explosion000" + i + ".png";
+            } else if (i < 100) {
+                explosionImages[i].src = "images/explosion/explosion00" + i + ".png";
+            } else {
+                explosionImages[i].src = "images/explosion/explosion0" + i + ".png";
+            }
+        }
+    }
+
+    loadExplosions();
+
     function update(elapsedTime) {
         let tempList = animationList;
         for (let i = 0; i < tempList.length; i++) {
 
             if (tempList[i].interval < 10) {
-                tempList[i].interval += elapsedTime;
+                animationList[i].interval += elapsedTime;
                 continue;
             }
-            tempList[i].interval = 0;
 
-            if (tempList[i].i < 10) {
-                animationList[i].image.src = "images/explosion/explosion000" + animationList[i].i + ".png";
-            } else if (tempList[i].i < 100) {
-                animationList[i].image.src = "images/explosion/explosion00" + animationList[i].i + ".png";
-            } else if (tempList[i].i < 155) {
-                animationList[i].image.src = "images/explosion/explosion0" + animationList[i].i + ".png";
-            } else {
-                animationList[i].i = -1;
-            }
+            animationList[i].interval = 0;
+            animationList[i].image = explosionImages[animationList[i].i];
 
             if (animationList[i].i < 0) {
                 animationList.splice(i, 1);
+            } else if (animationList[i].i >= 154) {
+                animationList[i].i = -1;
             } else {
                 animationList[i].i += 1;
             }
+
         }
     }
 
