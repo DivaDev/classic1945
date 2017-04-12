@@ -22,17 +22,17 @@ let CollisionSystem = (function() {
         }
     }
 
-    function didEnemyMissilesHitPlayer(enemyMissles, player) {
+    function didEnemyMissilesHitPlayer(enemyMissiles, player) {
 
         if (enemyMissiles.length === 0) {
             return;
         }
 
 
-        let tempMissiles = enemyMissles;
+        let tempMissiles = enemyMissiles;
 
         for (let j = 0; j < tempMissiles.length; j++) {
-            if (willCollide(enemyMissles[i], player)) {
+            if (willCollide(enemyMissiles[j], player)) {
                 //AnimationSystem.tieFighterExplosion(enemies[i]);
                 //This needs to be turned into the player getting damaged
                 player.health -= 10;
@@ -41,7 +41,7 @@ let CollisionSystem = (function() {
                 {
                     AnimationSystem.tieFighterExplosion(player);
                 }
-                missiles.splice(j, 1);
+                enemyMissiles.splice(j, 1);
                 break;
             }
         }
