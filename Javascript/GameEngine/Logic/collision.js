@@ -55,7 +55,8 @@ let CollisionSystem = (function() {
     }
 
     return {
-        didMissilesHitEnemy: didMissilesHitEnemy
+        didMissilesHitEnemy: didMissilesHitEnemy,
+        didEnemyMissilesHitPlayer : didEnemyMissilesHitPlayer
     };
 
 }());
