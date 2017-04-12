@@ -22,6 +22,31 @@ let CollisionSystem = (function() {
         }
     }
 
+    function didEnemyMissilesHitPlayer(enemyMissles, player) {
+
+        if (enemyMissiles.length === 0) {
+            return;
+        }
+
+
+        let tempMissiles = enemyMissles;
+
+        for (let j = 0; j < tempMissiles.length; j++) {
+            if (willCollide(enemyMissles[i], player)) {
+                //AnimationSystem.tieFighterExplosion(enemies[i]);
+                //This needs to be turned into the player getting damaged
+                player.health -= 10;
+
+                if(player.health <= 0)
+                {
+                    AnimationSystem.tieFighterExplosion(player);
+                }
+                missiles.splice(j, 1);
+                break;
+            }
+        }
+    }
+
     function willCollide(enemy, missile) {
         if (enemy.x <= (missile.x + missile.width) && missile.x <= (enemy.x + enemy.width) && enemy.y <= (missile.y + missile.height) && missile.y <= (enemy.y + enemy.height - 10)){
             return true;
