@@ -19,12 +19,16 @@ let GameEngine = (function() {
     let menu = Menu;
     let game = new Game(graphics);
     let timerInterval = 0;
-    let newGameAnimation = AnimateGameLoading(graphics);    
+    let newGameAnimation = AnimateGameLoading(graphics);
 
     let canvas = document.getElementById('canvas');
     canvas.addEventListener('click', function() {
         if (status === GameStatus.PLAY) {
             return; // ignore clicks when game is playing
+        }
+
+        if (status !== GameStatus.MENU) {
+            return;
         }
 
         if (menu.getSelection() === GameStatus.PLAY) {
@@ -34,12 +38,16 @@ let GameEngine = (function() {
             newGameAnimation.create(menu.leftShipImage, menu.rightShipImage);
             
             game.initialize();
-        }        
+        } else if (menu.getSelection() === GameStatus.SETTINGS) {
+            status = GameStatus.SETTINGS;
+            Settings.initialize();
+        }
     });
 
 
     document.addEventListener('keyup', () => {
         if (event.keyCode === 27) { // esc
+            Settings.willDispear();
             menu.willDisplay();
             status = GameStatus.MENU;
         }
@@ -61,6 +69,8 @@ let GameEngine = (function() {
         newGameAnimation.update(elapsedTime);
         if (status === GameStatus.PLAY) {
             game.update(elapsedTime);
+        } else if (status === GameStatus.SETTINGS) {
+            Settings.update(elapsedTime);
         }
 
         if (timerInterval > 1000) {
@@ -80,6 +90,8 @@ let GameEngine = (function() {
         } else if (status === GameStatus.PLAY && newGameAnimation.finished) {
             // render the game after new game animation has ended
             game.render();
+        } else if (status === GameStatus.SETTINGS) {
+            Settings.render();
         }
 
     }

@@ -38,6 +38,15 @@ let Graphics = (function() {
         context.restore();
     }
 
+    function drawSettingsRect(spec) {
+        context.save();
+        context.beginPath();
+        context.fillStyle = spec.fillStyle;
+        context.fillRect(spec.x, spec.y, spec.width, spec.height);
+        context.stroke();
+        context.restore();
+    }
+
     function finishDraw() {
         context.closePath();
         context.restore();
@@ -66,6 +75,16 @@ let Graphics = (function() {
         context.stroke();
     }
 
+    function drawText(spec) {
+        context.save();
+        context.beginPath();
+        context.font = spec.font;
+        context.fillStyle = spec.color;
+        context.fillText(spec.text, spec.x, spec.y);
+        context.fill();
+        context.restore();
+    }
+
     return {
         width: canvas.width,
         height: canvas.height,
@@ -77,5 +96,7 @@ let Graphics = (function() {
         drawLine: drawLine,
         drawBezierCurve: drawBezierCurve,
         drawQuadraticCurve: drawQuadraticCurve,
+        drawText: drawText,
+        drawRectangle: drawSettingsRect,
     }
 }());

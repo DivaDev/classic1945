@@ -144,10 +144,6 @@ let Menu = (function() {
     function update() {
         backgroundY += scrollSpeed;
 
-        // if(backgroundY === -1 * graphics.height){
-        //     backgroundY = 0;
-        // }
-
         if (backgroundY > 0) {
             backgroundY = -1 * graphics.height;
         }
