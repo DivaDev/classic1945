@@ -145,8 +145,10 @@ function Game(graphics) {
 
         CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
 
+
         enemies.forEach(function (enemy) {
             enemy.update(self.player);
+            CollisionSystem.didEnemyMissilesHitPlayer(enemy.missiles, self.player);
         });
 
         enemies = enemies.filter(function (enemy) {
