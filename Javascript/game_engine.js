@@ -18,7 +18,6 @@ let GameEngine = (function() {
     let graphics = Graphics;
     let menu = Menu;
     let game = new Game(graphics);
-    let scrollSpeed = 0.5;
     let timerInterval = 0;
     let newGameAnimation = AnimateGameLoading(graphics);    
 
@@ -56,7 +55,6 @@ let GameEngine = (function() {
         requestAnimationFrame(gameloop);
     }
 
-
     function update(elapsedTime) {
 
         menu.update();
@@ -77,9 +75,9 @@ let GameEngine = (function() {
         menu.drawBackground();
         newGameAnimation.render();
         
-        if (status == GameStatus.MENU) {
+        if (status === GameStatus.MENU) {
             menu.render();
-        } else if (status == GameStatus.PLAY && newGameAnimation.finished) {
+        } else if (status === GameStatus.PLAY && newGameAnimation.finished) {
             // render the game after new game animation has ended
             game.render();
         }

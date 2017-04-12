@@ -67,16 +67,16 @@ let Menu = (function() {
         height: 40
     };
     
-    backgroundImage.image.src = "images/background.png";
-    playImage.image.src = "images/play.png";
-    instructionsImage.image.src = "images/instructions.png";
-    settingsImage.image.src = "images/settings.png";
-    creditsImage.image.src = "images/credits.png";
-    leftShipImage.image.src = "images/rsz_xwing.png";
-    rightShipImage.image.src = "images/rsz_xwing.png";
+    backgroundImage.image.src = "Images/background.png";
+    playImage.image.src = "Images/play.png";
+    instructionsImage.image.src = "Images/instructions.png";
+    settingsImage.image.src = "Images/settings.png";
+    creditsImage.image.src = "Images/credits.png";
+    leftShipImage.image.src = "Images/rsz_xwing.png";
+    rightShipImage.image.src = "Images/rsz_xwing.png";
 
     let scrollSpeed = 0.5;
-    let backgroundY = 0;
+    let backgroundY = -1 * graphics.height;
 
     let canvas = document.getElementById('canvas');
     willDisplay();
@@ -112,22 +112,22 @@ let Menu = (function() {
 
     function getSelection() {
         
-        if (leftShipImage.y == buttonY[0] + 2) {
+        if (leftShipImage.y === buttonY[0] + 2) {
             console.log("Clicked play");
             return GameStatus.PLAY;
         }
 
-        if (leftShipImage.y == buttonY[1] + 2) {
+        if (leftShipImage.y === buttonY[1] + 2) {
             console.log("Clicked Instructions");
             return GameStatus.INSTRUCTIONS;
         }
 
-        if (leftShipImage.y == buttonY[2] + 2) {
+        if (leftShipImage.y === buttonY[2] + 2) {
             console.log("Clicked Settings");
             return GameStatus.SETTINGS;
         }
 
-        if (leftShipImage.y == buttonY[3] + 2) {
+        if (leftShipImage.y === buttonY[3] + 2) {
             console.log("Cliked Credits");
             return GameStatus.CREDITS;
         }
@@ -142,11 +142,16 @@ let Menu = (function() {
     }
 
     function update() {
-        backgroundY -= scrollSpeed;
+        backgroundY += scrollSpeed;
 
-        if(backgroundY == -1 * graphics.height){
-            backgroundY = 0;
+        // if(backgroundY === -1 * graphics.height){
+        //     backgroundY = 0;
+        // }
+
+        if (backgroundY > 0) {
+            backgroundY = -1 * graphics.height;
         }
+
         backgroundImage.y = backgroundY;
     }
 
@@ -246,8 +251,8 @@ function AnimateGameLoading(graphics) {
             return;
         }
 
-        graphics.drawLine(self.leftShipPath);
-        graphics.drawLine(self.rightShipPath);
+        // graphics.drawLine(self.leftShipPath);
+        // graphics.drawLine(self.rightShipPath);
 
         graphics.drawImage(self.leftShip);
         graphics.drawImage(self.rightShip);
