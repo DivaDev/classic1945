@@ -97,39 +97,41 @@ function Game(graphics) {
     possiblePaths.push(leftToBottomMiddleOffset);
 
     self.player = null;
+    self.inputDispatch = null;
 
-    self.initialize = function () {
+    self.initialize = function (controls) {
         console.log('start game');
         self.player = new Player(graphics.width / 2, graphics.height - 20);
+        self.inputDispatch = controls;
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
     };
 
     function handleKeyDown(event) {
-        if (event.keyCode === 39) {
+        if (event.keyCode === self.inputDispatch['RIGHT'].keycode) {
             self.player.willMoveRight = true;
-        } else if (event.keyCode === 37) {
+        } else if (event.keyCode === self.inputDispatch['LEFT'].keycode) {
             self.player.willMoveLeft = true;
         }
 
-        if (event.keyCode === 40) {
+        if (event.keyCode === self.inputDispatch['DOWN'].keycode) {
             self.player.willMoveDown = true;
-        } else if (event.keyCode === 38) {
+        } else if (event.keyCode === self.inputDispatch['UP'].keycode) {
             self.player.willMoveUp = true;
         }
     }
 
     function handleKeyUp(event) {
-        if (event.keyCode === 39) {
+        if (event.keyCode === self.inputDispatch['RIGHT'].keycode) {
             self.player.willMoveRight = false;
-        } else if (event.keyCode === 37) {
+        } else if (event.keyCode === self.inputDispatch['LEFT'].keycode) {
             self.player.willMoveLeft = false;
         }
 
-        if (event.keyCode === 40) {
+        if (event.keyCode === self.inputDispatch['DOWN'].keycode) {
             self.player.willMoveDown = false;
-        } else if (event.keyCode === 38) {
+        } else if (event.keyCode === self.inputDispatch['UP'].keycode) {
             self.player.willMoveUp = false;
         }
 
