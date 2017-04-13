@@ -31,14 +31,16 @@ let GameEngine = (function() {
             return;
         }
 
-        if (menu.getSelection() === GameStatus.PLAY) {
+        const selection = menu.getSelection();
+
+        if (selection === GameStatus.PLAY) {
             status = GameStatus.PLAY;
             menu.removeMouseMoveEvent();
             newGameAnimation = AnimateGameLoading(graphics);
             newGameAnimation.create(menu.leftShipImage, menu.rightShipImage);
             
             game.initialize(Settings.inputDispatch);
-        } else if (menu.getSelection() === GameStatus.SETTINGS) {
+        } else if (selection === GameStatus.SETTINGS) {
             status = GameStatus.SETTINGS;
             Settings.initialize();
         }

@@ -13,6 +13,11 @@ let SoundSystem = (function() {
     }
 
     function play(sound) {
+
+        if (!Settings.inputDispatch['SOUND'].isOn) {
+            return;
+        }
+
         // sounds[sound].play();
         let audio = loadSound(sound);
         audio.play();
