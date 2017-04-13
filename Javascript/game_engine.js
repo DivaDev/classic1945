@@ -43,6 +43,9 @@ let GameEngine = (function() {
         } else if (selection === GameStatus.SETTINGS) {
             status = GameStatus.SETTINGS;
             Settings.initialize();
+        } else if (selection === GameStatus.CREDITS) {
+            status = GameStatus.CREDITS;
+            Credits.initialize();
         }
     });
 
@@ -72,6 +75,8 @@ let GameEngine = (function() {
             game.update(elapsedTime);
         } else if (status === GameStatus.SETTINGS) {
             Settings.update(elapsedTime);
+        } else if (status === GameStatus.CREDITS) {
+            Credits.update(elapsedTime);
         }
 
         if (timerInterval > 1000) {
@@ -93,6 +98,8 @@ let GameEngine = (function() {
             game.render();
         } else if (status === GameStatus.SETTINGS) {
             Settings.render();
+        } else if (status === GameStatus.CREDITS) {
+            Credits.render();
         }
 
     }
