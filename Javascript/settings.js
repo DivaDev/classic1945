@@ -1,8 +1,10 @@
+'use strict';
 let Settings = (function() {
     const textTopSpace = 30;
     const rectTopSpace = 30;
     const canvas = document.getElementById('canvas');
 
+    // Default controls
     let inputDispatch = {
         'LEFT': {
             'keycode': 37,
@@ -25,10 +27,6 @@ let Settings = (function() {
         x: 50,
         y: 50
     };
-
-    function update(elapsedTime) {
-
-    }
 
     const defaultFillStyle = 'rgba(225, 225, 225, 0.5)';
     const highlightFillStyle = 'rgba(225, 225, 225, 1.0)';
@@ -84,7 +82,6 @@ let Settings = (function() {
             y: moveLeftRow.text.y + textTopSpace
         }
     };
-
 
     const moveUpRow = {
         direction: 'UP',
@@ -158,13 +155,13 @@ let Settings = (function() {
         }
     }
 
-    function willDispear() {
+    function willDisappear() {
         document.removeEventListener('keydown', handleKeyDown);
         canvas.removeEventListener('click', handleMouseClick);
 
         table.forEach(function(row) {
             row.isHighlighted = false;
-        })
+        });
     }
 
     function handleMouseClick(event) {
@@ -190,6 +187,15 @@ let Settings = (function() {
         }
     }
 
+    function isKeyTaken(event) {
+        for (let i = 0; i < table.length; i++) {
+            if (event.key === table[i].keyPosition.text) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function handleMouseMove(event) {
         table.forEach(function(row) {
             if (!row.isHighlighted) {
@@ -203,8 +209,23 @@ let Settings = (function() {
     }
 
     function handleKeyDown(event) {
+
+        if (event.keyCode === 27) {
+            return; // esc pressed
+        }
+
         let row = getHighlightedRow();
+
+        if (Object.keys(row).length === 0) {
+            return;
+        }
+
+        if (isKeyTaken(event)) {
+            return;
+        }
+
         row.keyPosition.text = event.key;
+        inputDispatch[row.direction].keycode = event.keyCode
     }
 
     function getHighlightedRow() {
@@ -215,6 +236,10 @@ let Settings = (function() {
         }
 
         return {};
+    }
+
+    function update(elapsedTime) {
+
     }
 
     function render() {
@@ -242,7 +267,8 @@ let Settings = (function() {
         update: update,
         render: render,
         initialize: initialize,
-        willDispear: willDispear
+        willDispear: willDisappear,
+        inputDispatch: inputDispatch
     }
 
 }());

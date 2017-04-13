@@ -37,15 +37,14 @@ let GameEngine = (function() {
             newGameAnimation = AnimateGameLoading(graphics);
             newGameAnimation.create(menu.leftShipImage, menu.rightShipImage);
             
-            game.initialize();
+            game.initialize(Settings.inputDispatch);
         } else if (menu.getSelection() === GameStatus.SETTINGS) {
             status = GameStatus.SETTINGS;
             Settings.initialize();
         }
     });
 
-
-    document.addEventListener('keyup', () => {
+    document.addEventListener('keyup', (event) => {
         if (event.keyCode === 27) { // esc
             Settings.willDispear();
             menu.willDisplay();
@@ -67,7 +66,7 @@ let GameEngine = (function() {
 
         menu.update();
         newGameAnimation.update(elapsedTime);
-        if (status === GameStatus.PLAY) {
+        if (status === GameStatus.PLAY && newGameAnimation.finished) {
             game.update(elapsedTime);
         } else if (status === GameStatus.SETTINGS) {
             Settings.update(elapsedTime);
