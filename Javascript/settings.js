@@ -224,8 +224,28 @@ let Settings = (function() {
             return;
         }
 
-        row.keyPosition.text = event.key;
-        inputDispatch[row.direction].keycode = event.keyCode
+        // Only allow letters and
+        switch (event.keyCode) {
+            case 13: // Enter
+            case 16: // Shift
+            case 17: // Ctrl
+            case 18: // Alt
+            case 19: // Pause/Break
+            case 20: // Caps Lock
+            case 27: // Escape
+            case 35: // End
+            case 36: // Home
+
+            // Mac CMD Key
+            case 91: // Safari, Chrome
+            case 93: // Safari, Chrome
+            case 224: // Firefox
+                break;
+            default:
+                row.keyPosition.text = event.key;
+                inputDispatch[row.direction].keycode = event.keyCode;
+                break
+        }
     }
 
     function getHighlightedRow() {
