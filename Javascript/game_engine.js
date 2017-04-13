@@ -31,16 +31,21 @@ let GameEngine = (function() {
             return;
         }
 
-        if (menu.getSelection() === GameStatus.PLAY) {
+        const selection = menu.getSelection();
+
+        if (selection === GameStatus.PLAY) {
             status = GameStatus.PLAY;
             menu.removeMouseMoveEvent();
             newGameAnimation = AnimateGameLoading(graphics);
             newGameAnimation.create(menu.leftShipImage, menu.rightShipImage);
             
             game.initialize(Settings.inputDispatch);
-        } else if (menu.getSelection() === GameStatus.SETTINGS) {
+        } else if (selection === GameStatus.SETTINGS) {
             status = GameStatus.SETTINGS;
             Settings.initialize();
+        } else if (selection === GameStatus.CREDITS) {
+            status = GameStatus.CREDITS;
+            Credits.initialize();
         }
     });
 
@@ -70,6 +75,8 @@ let GameEngine = (function() {
             game.update(elapsedTime);
         } else if (status === GameStatus.SETTINGS) {
             Settings.update(elapsedTime);
+        } else if (status === GameStatus.CREDITS) {
+            Credits.update(elapsedTime);
         }
 
         if (timerInterval > 1000) {
@@ -91,6 +98,8 @@ let GameEngine = (function() {
             game.render();
         } else if (status === GameStatus.SETTINGS) {
             Settings.render();
+        } else if (status === GameStatus.CREDITS) {
+            Credits.render();
         }
 
     }

@@ -161,7 +161,7 @@ function Game(graphics) {
             timerInterval = 0;
             sendEnemies = true;
             chosenPath = Math.floor((Math.random() * possiblePaths.length));
-            // SoundSystem.play('audio/TIE-Fly2.wav');
+            SoundSystem.play('audio/TIE-Fly2.wav');
         } else {
             timerInterval += elapsedTime;
             localInterval += elapsedTime;

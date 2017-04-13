@@ -17,15 +17,10 @@ let Settings = (function() {
         },
         'DOWN': {
             'keycode': 40,
+        },
+        'SOUND': {
+            isOn: true
         }
-    };
-
-    let music = {
-        font: "16px Arial",
-        color: "#FFFFFF",
-        text: 'Tie Fighter Sound: ON',
-        x: 50,
-        y: 50
     };
 
     const defaultFillStyle = 'rgba(225, 225, 225, 0.5)';
@@ -135,9 +130,43 @@ let Settings = (function() {
         }
     };
 
+    const toggleSound = {
+        direction: 'NONE',
+        isHighlighted: false,
+        isOn: true,
+        text: {
+            font: "16px Arial",
+            color: "#FFFFFF",
+            text: 'SOUND:',
+            x: 40,
+            y: moveDownRow.text.y + textTopSpace
+        },
+        controls: {
+            x: 175,
+            y: moveDownRow.controls.y + rectTopSpace,
+            width: 225,
+            height: 22,
+            fillStyle: defaultFillStyle
+        },
+        keyPosition: {
+            font: "16px Arial",
+            color: "#FFFFFF",
+            text: 'ON',
+            x: 175 + 225 / 2 - 30,
+            y: moveDownRow.text.y + textTopSpace
+        }
+    };
+
     const table = [moveLeftRow, moveRightRow, moveUpRow, moveDownRow];
 
     function initialize() {
+
+        table.forEach((row) => {
+            setKeyTextCenter(row);
+        });
+
+        setKeyTextCenter(toggleSound);
+
         document.addEventListener('keydown', handleKeyDown);
         canvas.addEventListener('click', handleMouseClick);
         canvas.addEventListener('mousemove', handleMouseMove)
@@ -174,6 +203,15 @@ let Settings = (function() {
                 row.isHighlighted = false;
             }
         });
+
+        if (isMouseWithinRow(event, toggleSound)) {
+            toggleSound.isOn = !toggleSound.isOn;
+            inputDispatch['SOUND'].isOn = toggleSound.isOn;
+
+            let status = (toggleSound.isOn) ? 'ON': 'OFF';
+            toggleSound.keyPosition.text = status;
+            setKeyTextCenter(toggleSound);
+        }
     }
 
     function isMouseWithinRow(event, row) {
@@ -206,21 +244,18 @@ let Settings = (function() {
                 }
             }
         });
+
+        if (isMouseWithinRow(event, toggleSound)) {
+            toggleSound.controls.fillStyle = highlightFillStyle;
+        } else {
+            toggleSound.controls.fillStyle = defaultFillStyle;
+        }
     }
 
     function handleKeyDown(event) {
-
-        if (event.keyCode === 27) {
-            return; // esc pressed
-        }
-
         let row = getHighlightedRow();
 
-        if (Object.keys(row).length === 0) {
-            return;
-        }
-
-        if (isKeyTaken(event)) {
+        if (Object.keys(row).length === 0 || isKeyTaken(event)) {
             return;
         }
 
@@ -244,8 +279,14 @@ let Settings = (function() {
             default:
                 row.keyPosition.text = event.key;
                 inputDispatch[row.direction].keycode = event.keyCode;
+                setKeyTextCenter(row);
                 break
         }
+    }
+
+    function setKeyTextCenter(row) {
+        const center = row.controls.x + (row.controls.width / 2);
+        row.keyPosition.x = center - (row.keyPosition.text.length * 4);
     }
 
     function getHighlightedRow() {
@@ -279,8 +320,9 @@ let Settings = (function() {
         Graphics.drawText(moveUpRow.keyPosition);
         Graphics.drawText(moveDownRow.keyPosition);
 
-
-        Graphics.drawText(music);
+        Graphics.drawText(toggleSound.text);
+        Graphics.drawRectangle(toggleSound.controls);
+        Graphics.drawText(toggleSound.keyPosition);
     }
 
     return {
