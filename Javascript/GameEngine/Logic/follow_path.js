@@ -84,7 +84,7 @@ let FollowPathSystem = (function() {
             cpy: 500,
             endX: 225,
             endY: 0
-        }
+        };
 
         const RightU = {
             type: PathTypes.QUAD,
@@ -94,7 +94,7 @@ let FollowPathSystem = (function() {
             cpy: 500,
             endX: Graphics.width - 225,
             endY: 0
-        }
+        };
 
         possiblePaths.push(aroundTheMapBezier);
         possiblePaths.push(aroundTheMapQuad);

@@ -156,15 +156,15 @@ function Game(graphics) {
         })
 
         // Play with
-        graphics.drawBezierCurve(possiblePaths[0]);
-        graphics.drawQuadraticCurve(possiblePaths[1]);
-        graphics.drawQuadraticCurve(possiblePaths[2]);
-        graphics.drawQuadraticCurve(possiblePaths[3]);
-        graphics.drawQuadraticCurve(possiblePaths[4]);
-        graphics.drawQuadraticCurve(possiblePaths[5]);
-        graphics.drawQuadraticCurve(possiblePaths[6]);
-        graphics.drawQuadraticCurve(possiblePaths[7]);
-        graphics.drawQuadraticCurve(possiblePaths[8]);
+        // graphics.drawBezierCurve(possiblePaths[0]);
+        // graphics.drawQuadraticCurve(possiblePaths[1]);
+        // graphics.drawQuadraticCurve(possiblePaths[2]);
+        // graphics.drawQuadraticCurve(possiblePaths[3]);
+        // graphics.drawQuadraticCurve(possiblePaths[4]);
+        // graphics.drawQuadraticCurve(possiblePaths[5]);
+        // graphics.drawQuadraticCurve(possiblePaths[6]);
+        // graphics.drawQuadraticCurve(possiblePaths[7]);
+        // graphics.drawQuadraticCurve(possiblePaths[8]);
     };
 
     function keepPlayerWithInBounds() {
