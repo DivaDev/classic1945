@@ -18,6 +18,7 @@ function Game(graphics) {
     let localInterval = 0;
     let possiblePaths = FollowPathSystem.possiblePaths;
     let enemyMissiles = [];
+    let score = 0;
 
     self.player = null;
     self.inputDispatch = null;
@@ -95,7 +96,7 @@ function Game(graphics) {
     self.update = function (elapsedTime) {
 
         updatePlayer();
-        CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
+        score += CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);        
         updateEnemies();
 
@@ -127,6 +128,18 @@ function Game(graphics) {
     };
 
     self.render = function () {
+        graphics.drawUnFilledRectangle(self.player.health.outline);
+        graphics.drawRectangle(self.player.health.fill);
+        graphics.drawText(self.player.health.text);
+
+        graphics.drawText({
+            font: "8px Arial",
+            color: "#FFFFFF",
+            text: 'Score: ' + score.toString(),
+            x: graphics.width - 40,
+            y: 10
+        })
+
         AnimationSystem.render();
         graphics.drawImage(self.player);
         self.player.missiles.forEach(function (missile) {
@@ -142,18 +155,16 @@ function Game(graphics) {
             // graphics.drawLine(missile.path);
         })
 
-        graphics.drawUnFilledRectangle(self.player.health.outline);
-        graphics.drawRectangle(self.player.health.fill);
-        graphics.drawText(self.player.health.text);
-
         // Play with
-        // graphics.drawBezierCurve(possiblePaths[0]);
-        // graphics.drawQuadraticCurve(possiblePaths[1]);
-        // graphics.drawQuadraticCurve(possiblePaths[2]);
-        // graphics.drawQuadraticCurve(possiblePaths[3]);
-        // graphics.drawQuadraticCurve(possiblePaths[4]);
-        // graphics.drawQuadraticCurve(possiblePaths[5]);
-        // graphics.drawQuadraticCurve(possiblePaths[6]);
+        graphics.drawBezierCurve(possiblePaths[0]);
+        graphics.drawQuadraticCurve(possiblePaths[1]);
+        graphics.drawQuadraticCurve(possiblePaths[2]);
+        graphics.drawQuadraticCurve(possiblePaths[3]);
+        graphics.drawQuadraticCurve(possiblePaths[4]);
+        graphics.drawQuadraticCurve(possiblePaths[5]);
+        graphics.drawQuadraticCurve(possiblePaths[6]);
+        graphics.drawQuadraticCurve(possiblePaths[7]);
+        graphics.drawQuadraticCurve(possiblePaths[8]);
     };
 
     function keepPlayerWithInBounds() {

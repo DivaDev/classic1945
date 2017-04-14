@@ -65,6 +65,24 @@ let GameEngine = (function() {
         }
     });
 
+    function showPause() {
+        graphics.drawText({
+            font: "36px Arial",
+            color: "#FFFFFF",
+            text: 'PAUSED',
+            x: graphics.width / 2 - 60,
+            y: graphics.height / 2
+        });
+
+        graphics.drawText({
+            font: "12px Arial",
+            color: "#FFFFFF",
+            text: 'Click anywhere to resume',
+            x: graphics.width / 2 - 57,
+            y: graphics.height / 2 + 20
+        });
+    }
+
     function gameloop(timestamp) {
         let progress = timestamp - lastRender;
 
@@ -105,24 +123,6 @@ let GameEngine = (function() {
         menu.drawBackground();
         newGameAnimation.render();
 
-        if (status === GameStatus.PAUSE) {
-            graphics.drawText({
-                font: "36px Arial",
-                color: "#FFFFFF",
-                text: 'PAUSED',
-                x: graphics.width / 2 - 60,
-                y: graphics.height / 2
-            });
-
-            graphics.drawText({
-                font: "12px Arial",
-                color: "#FFFFFF",
-                text: 'Click anywhere to resume',
-                x: graphics.width / 2 - 57,
-                y: graphics.height / 2 + 20
-            });
-        }
-
         if (status === GameStatus.MENU) {
             menu.render();
         } else if (status === GameStatus.PLAY && newGameAnimation.finished || status === GameStatus.PAUSE) {
@@ -136,7 +136,13 @@ let GameEngine = (function() {
             Instructions.render();
         }
 
+        if (status === GameStatus.PAUSE) {
+            // At bottom so the text appears on top of everything else
+            showPause();   
+        }
     }
+
+    
 
     requestAnimationFrame(gameloop);
     

@@ -5,10 +5,12 @@ let Credits = (function() {
     Sites that may be worth mentioning in credits but may not fit in the screen
     https://code.tutsplus.com/tutorials/animating-game-menus-and-screen-transitions-in-html5-a-guide-for-flash-developers--active-11183
 
+    Background image: http://i.imgur.com/hnAwzLU.jpg
+
      */
 
     function initialize() {
-
+        
     }
 
     function update(elapsedTime) {

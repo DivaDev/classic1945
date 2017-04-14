@@ -4,4 +4,11 @@ canvas {
     height: 60%;
     display: block;
     margin: 0 auto;
+    border-style: groove;
+}
+
+body {
+    background-image: url("../images/app_background.png");
+    background-attachment: fixed;
+    background-position: 10% 50%;
 }

@@ -4,8 +4,10 @@ let CollisionSystem = (function() {
 
     function didPlayerMissilesHitEnemy(enemies, missiles) {
 
+        let enemiesHit = 0;
+
         if (enemies.length === 0 || missiles.length === 0) {
-            return;
+            return enemiesHit;
         }
 
         let tempEnemies = enemies;
@@ -18,10 +20,13 @@ let CollisionSystem = (function() {
                     AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
                     enemies.splice(i, 1);
                     missiles.splice(j, 1);
+                    enemiesHit++;
                     break;
                 }
             }
         }
+
+        return enemiesHit;
     }
 
     function didEnemyMissilesHitPlayer(enemyMissiles, player) {

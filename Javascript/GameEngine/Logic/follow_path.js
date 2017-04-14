@@ -76,6 +76,26 @@ let FollowPathSystem = (function() {
             endY: Graphics.height
         };
 
+        const leftU = {
+            type: PathTypes.QUAD,
+            startX: 50,
+            startY: 0,
+            cpx: 125,
+            cpy: 500,
+            endX: 225,
+            endY: 0
+        }
+
+        const RightU = {
+            type: PathTypes.QUAD,
+            startX: Graphics.width - 50,
+            startY: 0,
+            cpx: Graphics.width - 125,
+            cpy: 500,
+            endX: Graphics.width - 225,
+            endY: 0
+        }
+
         possiblePaths.push(aroundTheMapBezier);
         possiblePaths.push(aroundTheMapQuad);
         possiblePaths.push(leftCurveOut);
@@ -83,6 +103,8 @@ let FollowPathSystem = (function() {
         possiblePaths.push(leftToBottomMiddle);
         possiblePaths.push(rightToBottomMiddle);
         possiblePaths.push(leftToBottomMiddleOffset);
+        possiblePaths.push(leftU);
+        possiblePaths.push(RightU);
     }
 
     function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
