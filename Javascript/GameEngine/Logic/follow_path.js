@@ -1,5 +1,90 @@
 
 let FollowPathSystem = (function() {
+    let possiblePaths = [];
+    function loadPaths() {
+        possiblePaths.length = 0;
+
+        const aroundTheMapBezier = {
+            type: PathTypes.BEZIER,
+            startX: 0,
+            startY: 0,
+            cp1x: Graphics.width / 2,
+            cp1y: 200,
+            cp2x: Graphics.width / 2,
+            cp2y: 200,
+            endX: Graphics.width,
+            endY: 0
+        };
+
+        const aroundTheMapQuad = {
+            type: PathTypes.QUAD,
+            startX: 0,
+            startY: 0,
+            cpx: Graphics.width / 2,
+            cpy: 200,
+            endX: Graphics.width,
+            endY: 0
+        };
+
+        const leftCurveOut = {
+            type: PathTypes.QUAD,
+            startX: 0,
+            startY: 0,
+            cpx: Graphics.width / 2,
+            cpy: Graphics.height / 2,
+            endX: 0,
+            endY: Graphics.height
+        };
+
+        const rightCurveOut = {
+            type: PathTypes.QUAD,
+            startX: Graphics.width,
+            startY: 0,
+            cpx: Graphics.width / 2,
+            cpy: Graphics.height / 2,
+            endX: Graphics.width,
+            endY: Graphics.height
+        };
+
+        const leftToBottomMiddle = {
+            type: PathTypes.QUAD,
+            startX: 0,
+            startY: 0,
+            cpx: Graphics.width / 2 - 25,
+            cpy: Graphics.height / 2 - 25,
+            endX: Graphics.width / 2 - 25,
+            endY: Graphics.height
+        };
+
+        const rightToBottomMiddle = {
+            type: PathTypes.QUAD,
+            startX: Graphics.width,
+            startY: 0,
+            cpx: Graphics.width / 2 + 25,
+            cpy: Graphics.height / 2 + 25,
+            endX: Graphics.width / 2 + 25,
+            endY: Graphics.height
+        };
+
+        const leftToBottomMiddleOffset = {
+            type: PathTypes.QUAD,
+            startX: 0,
+            startY: 50,
+            cpx: Graphics.width / 2 - 50,
+            cpy: Graphics.height / 2 - 50,
+            endX: Graphics.width / 2 - 50,
+            endY: Graphics.height
+        };
+
+        possiblePaths.push(aroundTheMapBezier);
+        possiblePaths.push(aroundTheMapQuad);
+        possiblePaths.push(leftCurveOut);
+        possiblePaths.push(rightCurveOut);
+        possiblePaths.push(leftToBottomMiddle);
+        possiblePaths.push(rightToBottomMiddle);
+        possiblePaths.push(leftToBottomMiddleOffset);
+    }
+
     function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
         let x = Math.pow(1 - percent, 2) * startPt.x + 2 * (1 - percent) * percent * controlPt.x + Math.pow(percent, 2) * endPt.x;
         let y = Math.pow(1 - percent, 2) * startPt.y + 2 * (1 - percent) * percent * controlPt.y + Math.pow(percent, 2) * endPt.y;
@@ -77,7 +162,9 @@ let FollowPathSystem = (function() {
     }
 
     return {
-        update: update
+        update: update,
+        loadPaths: loadPaths,
+        possiblePaths: possiblePaths,
     }
 
 }());

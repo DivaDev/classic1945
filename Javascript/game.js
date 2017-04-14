@@ -7,6 +7,8 @@ const PathTypes = {
 };
 
 function Game(graphics) {
+    FollowPathSystem.loadPaths();
+    
     let self = {};
     let enemies = [];
     let sendEnemies = false;
@@ -14,87 +16,8 @@ function Game(graphics) {
     let countLaunchedEnemies = 0;
     let timerInterval = 0;
     let localInterval = 0;
-    let possiblePaths = [];
-
-    const aroundTheMapBezier = {
-        type: PathTypes.BEZIER,
-        startX: 0,
-        startY: 0,
-        cp1x: graphics.width / 2,
-        cp1y: 200,
-        cp2x: graphics.width / 2,
-        cp2y: 200,
-        endX: graphics.width,
-        endY: 0
-    };
-
-    const aroundTheMapQuad = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 0,
-        cpx: graphics.width / 2,
-        cpy: 200,
-        endX: graphics.width,
-        endY: 0
-    };
-
-    const leftCurveOut = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 0,
-        cpx: graphics.width / 2,
-        cpy: graphics.height / 2,
-        endX: 0,
-        endY: graphics.height
-    };
-
-    const rightCurveOut = {
-        type: PathTypes.QUAD,
-        startX: graphics.width,
-        startY: 0,
-        cpx: graphics.width / 2,
-        cpy: graphics.height / 2,
-        endX: graphics.width,
-        endY: graphics.height
-    };
-
-    const leftToBottomMiddle = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 0,
-        cpx: graphics.width / 2 - 25,
-        cpy: graphics.height / 2 - 25,
-        endX: graphics.width / 2 - 25,
-        endY: graphics.height
-    };
-
-    const rightToBottomMiddle = {
-        type: PathTypes.QUAD,
-        startX: graphics.width,
-        startY: 0,
-        cpx: graphics.width / 2 + 25,
-        cpy: graphics.height / 2 + 25,
-        endX: graphics.width / 2 + 25,
-        endY: graphics.height
-    };
-
-    const leftToBottomMiddleOffset = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 50,
-        cpx: graphics.width / 2 - 50,
-        cpy: graphics.height / 2 - 50,
-        endX: graphics.width / 2 - 50,
-        endY: graphics.height
-    };
-
-    possiblePaths.push(aroundTheMapBezier);
-    possiblePaths.push(aroundTheMapQuad);
-    possiblePaths.push(leftCurveOut);
-    possiblePaths.push(rightCurveOut);
-    possiblePaths.push(leftToBottomMiddle);
-    possiblePaths.push(rightToBottomMiddle);
-    possiblePaths.push(leftToBottomMiddleOffset);
+    let possiblePaths = FollowPathSystem.possiblePaths;
+    let enemyMissiles = [];
 
     self.player = null;
     self.inputDispatch = null;
@@ -137,25 +60,44 @@ function Game(graphics) {
 
         if (event.keyCode === 32) { // space
             self.player.fire();
-            SoundSystem.play('audio/XWing-Laser.wav');
+            SoundSystem.play('audio/XWing-Laser.wav');            
         }
+    }
+
+    function updateEnemies() {
+        enemies.forEach(function (enemy) {
+            enemy.update(self.player);
+            if (enemy.willFire) {
+                enemyMissiles.push(enemy.fire(self.player));
+            }
+        });
+
+        enemies = enemies.filter((enemy) => {
+            return !enemy.finished;  // Keep the non finished
+        });
+
+        let missiles = enemyMissiles;
+        for (let i = 0; i < missiles.length; i++) {
+            missiles[i].update();
+
+            if (missiles[i].y < 0) {
+                // Remove missile when off the screen
+                enemyMissiles.splice(i, 1);
+            }
+        }
+    }
+
+    function updatePlayer() {
+        self.player.update();
+        keepPlayerWithInBounds();
     }
 
     self.update = function (elapsedTime) {
 
-        self.player.update();
-        keepPlayerWithInBounds();
-
-        CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
-
-        enemies.forEach(function (enemy) {
-            enemy.update(self.player);
-            CollisionSystem.didEnemyMissilesHitPlayer(enemy.missiles, self.player);
-        });
-
-        enemies = enemies.filter(function (enemy) {
-            return !enemy.finished;  // Keep the non finished
-        });
+        updatePlayer();
+        CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
+        CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);        
+        updateEnemies();
 
         if (timerInterval > 3000) {
             timerInterval = 0;
@@ -193,11 +135,12 @@ function Game(graphics) {
 
         enemies.forEach(function (enemy) {
             graphics.drawImage(enemy);
-            enemy.missiles.forEach(function (missile) {
-                graphics.drawSquare(missile);
-                // graphics.drawLine(missile.path);
-            });
         });
+
+        enemyMissiles.forEach((missile) => {
+            graphics.drawSquare(missile);
+            // graphics.drawLine(missile.path);
+        })
 
         graphics.drawUnFilledRectangle(self.player.health.outline);
         graphics.drawRectangle(self.player.health.fill);
@@ -244,8 +187,9 @@ let AnimationSystem = (function() {
 
         let sprite = {
             image: new Image(),
-            x: fighter.x - 128,
-            y: fighter.y - 128,
+            // 128 is half the size of the enemy image
+            x: fighter.x - 128 + fighter.width / 2,
+            y: fighter.y - 128 + fighter.height / 2,
             i: 0,
             interval: 0,
         };
@@ -301,7 +245,6 @@ let AnimationSystem = (function() {
             } else {
                 animationList[i].i += 1;
             }
-
         }
     }
 

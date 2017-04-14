@@ -8,7 +8,7 @@ let SoundSystem = (function() {
     }
 
     function loadAudio() {
-        sounds['audio/XWing-Laser'] = loadSound('audio/XWing-Laser.wav');
+        sounds['audio/Star_Wars_Theme_John_Williams'] = loadSound('audio/Star_Wars_Theme_John_Williams.mp3');
         console.log('Sound Initialized');
     }
 
@@ -17,15 +17,34 @@ let SoundSystem = (function() {
         if (!Settings.inputDispatch['SOUND'].isOn) {
             return;
         }
+        
+        if (sounds.hasOwnProperty(sound)) {
+            sounds[sound].play();
+            return;
+        }
 
-        // sounds[sound].play();
         let audio = loadSound(sound);
         audio.play();
     }
 
-    // loadAudio();
+    function pause() {
+        // Pause all audio
+        Object.keys(sounds).forEach(function(sound) {
+            sounds[sound].pause();
+        });
+    }
+
+    function resume() {
+        Object.keys(sounds).forEach(function(sound) {
+            sounds[sound].play();
+        });
+    }
+
+    loadAudio();
 
     return {
         play: play,
+        pause: pause,
+        resume: resume
     }
 }());

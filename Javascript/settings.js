@@ -210,6 +210,12 @@ let Settings = (function() {
             toggleSound.isOn = !toggleSound.isOn;
             inputDispatch['SOUND'].isOn = toggleSound.isOn;
 
+            if (toggleSound.isOn) {
+                SoundSystem.resume();
+            } else {
+                SoundSystem.pause();
+            }
+
             let status = (toggleSound.isOn) ? 'ON': 'OFF';
             toggleSound.keyPosition.text = status;
             setKeyTextCenter(toggleSound);
