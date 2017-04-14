@@ -94,6 +94,41 @@ let Graphics = (function() {
         context.restore();
     }
 
+    function drawCircle(spec) {
+        context.beginPath();
+
+        let gradient = context.createRadialGradient(
+            spec.x,
+            spec.y,
+            spec.innerRadius,
+            spec.x,
+            spec.y,
+            spec.radius
+        );
+
+        if (spec.hasOwnProperty('gradient')) {
+            spec.gradient.colors.forEach((section) => {
+                gradient.addColorStop(section.offset, section.color);
+            });
+        }
+
+        context.arc(spec.x, spec.y, spec.radius, spec.startAngle, spec.endAngle, false);
+        context.closePath();
+        context.lineWidth = spec.lineWidth;
+        context.fillStyle = gradient;
+        context.fill();
+        context.stroke();
+    }
+
+    function drawParticleCircle(spec) {
+        context.beginPath();
+        context.arc(spec.center.x, spec.center.y, spec.size, 0, 2 * Math.PI);
+        context.fillStyle = spec.fillStyle;
+        context.strokeStyle = 'white';
+        context.fill();
+        context.stroke();
+    }
+
     return {
         width: canvas.width,
         height: canvas.height,
@@ -108,6 +143,7 @@ let Graphics = (function() {
         drawText: drawText,
         drawRectangle: drawRectangle,
         drawUnFilledRectangle: drawUnFilledRectangle,
-
+        drawCircle: drawCircle,
+        drawParticleCircle: drawParticleCircle,
     }
 }());

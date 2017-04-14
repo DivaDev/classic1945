@@ -44,6 +44,11 @@ function Game(graphics) {
         } else if (event.keyCode === self.inputDispatch['UP'].keycode) {
             self.player.willMoveUp = true;
         }
+
+        if (event.keyCode === 32) {
+            // self.player.willChargeSuperBeam = true;
+            self.player.chargeSuperWeapon(); 
+        }
     }
 
     function handleKeyUp(event) {
@@ -61,6 +66,8 @@ function Game(graphics) {
 
         if (event.keyCode === 32) { // space
             self.player.fire();
+            // self.player.willChargeSuperBeam = false;
+            self.player.fireSuperWeapon();
             SoundSystem.play('audio/XWing-Laser.wav');            
         }
     }
@@ -88,14 +95,14 @@ function Game(graphics) {
         }
     }
 
-    function updatePlayer() {
-        self.player.update();
+    function updatePlayer(elapsedTime) {
+        self.player.update(elapsedTime);
         keepPlayerWithInBounds();
     }
 
     self.update = function (elapsedTime) {
 
-        updatePlayer();
+        updatePlayer(elapsedTime);
         score += CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);        
         updateEnemies();
@@ -118,6 +125,9 @@ function Game(graphics) {
                 localInterval = 0;
                 countLaunchedEnemies++;
                 enemies.push(new Enemy(possiblePaths[chosenPath]));
+                if (chosenPath === 7) {
+                    enemies.push(new Enemy(possiblePaths[8]));
+                }
             }
 
             if (countLaunchedEnemies > 3) {
@@ -132,13 +142,15 @@ function Game(graphics) {
         graphics.drawRectangle(self.player.health.fill);
         graphics.drawText(self.player.health.text);
 
+        self.player.superWeapon.render();
+
         graphics.drawText({
             font: "8px Arial",
             color: "#FFFFFF",
             text: 'Score: ' + score.toString(),
             x: graphics.width - 40,
             y: 10
-        })
+        });
 
         AnimationSystem.render();
         graphics.drawImage(self.player);
