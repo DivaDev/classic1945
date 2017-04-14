@@ -38,13 +38,22 @@ let Graphics = (function() {
         context.restore();
     }
 
-    function drawSettingsRect(spec) {
+    function drawRectangle(spec) {
         context.save();
         context.beginPath();
         context.fillStyle = spec.fillStyle;
         context.fillRect(spec.x, spec.y, spec.width, spec.height);
         context.stroke();
         context.restore();
+    }
+
+    function drawUnFilledRectangle(spec) {
+        // debugger;
+        context.beginPath();
+        context.lineWidth = spec.lineWidth;
+        context.strokeStyle = spec.strokeStyle;
+        context.rect(spec.x, spec.y, spec.width, spec.height);
+        context.stroke();
     }
 
     function finishDraw() {
@@ -97,6 +106,8 @@ let Graphics = (function() {
         drawBezierCurve: drawBezierCurve,
         drawQuadraticCurve: drawQuadraticCurve,
         drawText: drawText,
-        drawRectangle: drawSettingsRect,
+        drawRectangle: drawRectangle,
+        drawUnFilledRectangle: drawUnFilledRectangle,
+
     }
 }());

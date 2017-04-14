@@ -1,4 +1,5 @@
 function Player(startX, startY) {
+    const hitPoints = 100;
     let self = {};
     let movementSpeed = 4;
 
@@ -15,7 +16,39 @@ function Player(startX, startY) {
     self.willMoveDown = false;
     self.willMoveRight = false;
     self.missiles = [];
-    self.health = 100;
+    self.health = {
+        hitPoints: hitPoints,
+        outline: {
+            x: 5,
+            y: 15,
+            width: 100,
+            height: 10,
+            strokeStyle: 'rgba(0, 225, 0, 0.5)',
+            lineWidth: 1
+        },
+        fill: {
+            x: 5,
+            y: 15,
+            width: hitPoints,
+            height: 10,
+            fillStyle: 'rgba(0, 225, 0, 0.5)',
+        },
+
+        update: function() {
+            if (self.health.hitPoints >= 0) {
+                self.health.fill.width = self.health.hitPoints;
+            }
+        },
+
+        text: {
+            font: "8px Arial",
+            color: "#FFFFFF",
+            text: 'Health',
+            x: 5,
+            y: 10
+        }
+    };
+
 
     let willFireOnRight = true;
 
@@ -68,7 +101,10 @@ function Player(startX, startY) {
         if (self.willMoveRight) {
             self.x += movementSpeed;
         }
+
     };
+
+
 
     return self;
 }

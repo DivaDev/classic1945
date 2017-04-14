@@ -143,11 +143,10 @@ function Game(graphics) {
 
     self.update = function (elapsedTime) {
 
-
         self.player.update();
+        keepPlayerWithInBounds();
 
         CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
-
 
         enemies.forEach(function (enemy) {
             enemy.update(self.player);
@@ -171,7 +170,6 @@ function Game(graphics) {
         AnimationSystem.update(elapsedTime);
 
         if (sendEnemies) {
-
 
             if (localInterval > 350) {
                 localInterval = 0;
@@ -199,8 +197,11 @@ function Game(graphics) {
                 graphics.drawSquare(missile);
                 // graphics.drawLine(missile.path);
             });
-
         });
+
+        graphics.drawUnFilledRectangle(self.player.health.outline);
+        graphics.drawRectangle(self.player.health.fill);
+        graphics.drawText(self.player.health.text);
 
         // Play with
         // graphics.drawBezierCurve(possiblePaths[0]);
@@ -212,27 +213,46 @@ function Game(graphics) {
         // graphics.drawQuadraticCurve(possiblePaths[6]);
     };
 
+    function keepPlayerWithInBounds() {
+        if (self.player.x < 0) {
+            self.player.x = 0;
+        }
+
+        if (self.player.x > graphics.width - self.player.width) {
+            self.player.x = graphics.width - self.player.width;
+        }
+
+        if (self.player.y < 0) {
+            self.player.y = 0;
+        }
+
+        if (self.player.y > graphics.height - self.player.height) {
+            self.player.y = graphics.height - self.player.height;
+        }
+    }
+
     return self;
 }
 
 let AnimationSystem = (function() {
 
     let animationList = [];
-    function tieFighterExplosion(tieFighter) {
+    let explosionImages = [];
+    let playerExplosion = [];
+
+    function addExplosion(fighter, imageSource) {
 
         let sprite = {
             image: new Image(),
-            x: tieFighter.x - 128,
-            y: tieFighter.y - 128,
+            x: fighter.x - 128,
+            y: fighter.y - 128,
             i: 0,
             interval: 0,
         };
-        sprite.image.src = "images/explosion/explosion0000.png";
 
+        sprite.image.src = imageSource;
         animationList.push(sprite);
     }
-
-    let explosionImages = [];
 
     function loadExplosions() {
         for (let i = 0; i < 155; i++) {
@@ -244,6 +264,18 @@ let AnimationSystem = (function() {
                 explosionImages[i].src = "images/explosion/explosion00" + i + ".png";
             } else {
                 explosionImages[i].src = "images/explosion/explosion0" + i + ".png";
+            }
+        }
+
+        for (let i = 0; i < 45; i++) {
+            playerExplosion.push(new Image());
+
+            if (i < 10) {
+                playerExplosion[i].src = "images/player_hit_explosion/explosion000" + i + ".png";
+            } else if (i < 100) {
+                playerExplosion[i].src = "images/player_hit_explosion/explosion00" + i + ".png";
+            } else {
+                playerExplosion[i].src = "images/player_hit_explosion/explosion0" + i + ".png";
             }
         }
     }
@@ -276,11 +308,11 @@ let AnimationSystem = (function() {
     function render() {
         animationList.forEach(function (sprite) {
             Graphics.drawImage(sprite);
-        })
+        });
     }
 
     return {
-        tieFighterExplosion: tieFighterExplosion,
+        addExplosion: addExplosion,
         update: update,
         render: render,
     }

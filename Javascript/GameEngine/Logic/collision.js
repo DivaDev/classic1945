@@ -1,5 +1,7 @@
 let CollisionSystem = (function() {
 
+    const playerDamage = 20;
+
     function didMissilesHitEnemy(enemies, missiles) {
 
         if (enemies.length === 0 || missiles.length === 0) {
@@ -13,7 +15,7 @@ let CollisionSystem = (function() {
 
             for (let j = 0; j < tempMissiles.length; j++) {
                 if (willCollide(enemies[i], missiles[j])) {
-                    AnimationSystem.tieFighterExplosion(enemies[i]);
+                    AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
                     enemies.splice(i, 1);
                     missiles.splice(j, 1);
                     break;
@@ -35,11 +37,12 @@ let CollisionSystem = (function() {
             if (willCollide(enemyMissiles[j], player)) {
                 //AnimationSystem.tieFighterExplosion(enemies[i]);
                 //This needs to be turned into the player getting damaged
-                player.health -= 10;
+                player.health.hitPoints -= playerDamage;
+                player.health.update();
 
-                if(player.health <= 0)
+                if(player.health.hitPoints <= 0)
                 {
-                    AnimationSystem.tieFighterExplosion(player);
+                    AnimationSystem.addExplosion(player, "images/explosion/explosion0000.png");
                 }
                 enemyMissiles.splice(j, 1);
                 break;
