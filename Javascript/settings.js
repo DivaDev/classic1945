@@ -193,6 +193,8 @@ let Settings = (function() {
         });
     }
 
+
+
     function handleMouseClick(event) {
         table.forEach(function(row) {
             if (isMouseWithinRow(event, row)) {
@@ -329,7 +331,7 @@ let Settings = (function() {
         update: update,
         render: render,
         initialize: initialize,
-        willDispear: willDisappear,
+        willDisappear: willDisappear,
         inputDispatch: inputDispatch
     }
 
