@@ -8,7 +8,8 @@ const GameStatus = {
     PLAY: 1,
     INSTRUCTIONS: 2,
     SETTINGS: 3,
-    CREDITS: 4
+    CREDITS: 4,
+    PAUSE: 5
 };
 
 let GameEngine = (function() {
@@ -23,6 +24,11 @@ let GameEngine = (function() {
 
     let canvas = document.getElementById('canvas');
     canvas.addEventListener('click', function() {
+
+        if(status === GameStatus.PAUSE){
+            status = GameStatus.PLAY;
+            return;
+        }
         if (status === GameStatus.PLAY) {
             return; // ignore clicks when game is playing
         }
@@ -51,9 +57,13 @@ let GameEngine = (function() {
 
     document.addEventListener('keyup', (event) => {
         if (event.keyCode === 27) { // esc
-            Settings.willDispear();
-            menu.willDisplay();
-            status = GameStatus.MENU;
+            if (status === GameStatus.PLAY) {
+                status = GameStatus.PAUSE;
+            } else {
+                status = GameStatus.MENU;
+                Settings.willDisappear();
+                menu.willDisplay();
+            }
         }
     });
 
@@ -68,6 +78,10 @@ let GameEngine = (function() {
     }
 
     function update(elapsedTime) {
+
+        if(status === GameStatus.PAUSE){
+            return;
+        }
 
         menu.update();
         newGameAnimation.update(elapsedTime);
@@ -90,10 +104,28 @@ let GameEngine = (function() {
         graphics.beginDrawing();
         menu.drawBackground();
         newGameAnimation.render();
-        
+
+        if (status === GameStatus.PAUSE) {
+            graphics.drawText({
+                font: "36px Arial",
+                color: "#FFFFFF",
+                text: 'PAUSED',
+                x: graphics.width / 2 - 60,
+                y: graphics.height / 2
+            });
+
+            graphics.drawText({
+                font: "12px Arial",
+                color: "#FFFFFF",
+                text: 'Click anywhere to resume',
+                x: graphics.width / 2 - 57,
+                y: graphics.height / 2 + 20
+            });
+        }
+
         if (status === GameStatus.MENU) {
             menu.render();
-        } else if (status === GameStatus.PLAY && newGameAnimation.finished) {
+        } else if (status === GameStatus.PLAY && newGameAnimation.finished || status === GameStatus.PAUSE) {
             // render the game after new game animation has ended
             game.render();
         } else if (status === GameStatus.SETTINGS) {

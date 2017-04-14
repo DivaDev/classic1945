@@ -143,6 +143,7 @@ function Game(graphics) {
 
     self.update = function (elapsedTime) {
 
+
         self.player.update();
 
         CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
@@ -170,6 +171,7 @@ function Game(graphics) {
         AnimationSystem.update(elapsedTime);
 
         if (sendEnemies) {
+
 
             if (localInterval > 350) {
                 localInterval = 0;
