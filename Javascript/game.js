@@ -104,7 +104,8 @@ function Game(graphics) {
 
         updatePlayer(elapsedTime);
         score += CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
-        CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);        
+        CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
+        CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
         updateEnemies();
 
         if (timerInterval > 3000) {

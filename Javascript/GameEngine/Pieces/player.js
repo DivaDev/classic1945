@@ -51,7 +51,6 @@ function Player(startX, startY) {
     };
 
     self.willChargeSuperBeam = false;
-    
 
     function coolDownWeapons() {
         self.superWeapon = new PlayerSuperWeapon({
@@ -135,8 +134,8 @@ function Player(startX, startY) {
 
     let superWeaponState = superWeaponStages.NONE;
 
-    self.chargeSuperWeapon = function() { superWeaponState = superWeaponStages.CHARGE; }
-    self.fireSuperWeapon = function() { superWeaponState = superWeaponStages.FIRE; }
+    self.chargeSuperWeapon = function() { superWeaponState = superWeaponStages.CHARGE; };
+    self.fireSuperWeapon = function() { superWeaponState = superWeaponStages.FIRE; };
 
     self.move = function() {
         if (self.willMoveUp) {
@@ -179,7 +178,7 @@ function PlayerSuperWeapon(specs) {
         lifetime: {mean: 1, stdev: 0.25}
     }, Graphics);
 
-    let pulseOutward = true;
+    // let pulseOutward = true;
     // function pulse(elapsedTime) {
     //     if (timerInterval < 1000) {
     //         radiusDelta = 0.1;
@@ -210,6 +209,7 @@ function PlayerSuperWeapon(specs) {
     // }
 
     let nParticles = 0;
+    self.weaponReady = false;
     function charge(elapsedTime, player) {
         
         if (timerInterval < 2000) {
@@ -218,6 +218,7 @@ function PlayerSuperWeapon(specs) {
         } else if (timerInterval < 5000) {
             radiusDelta = 0.5;
             nParticles = 4;
+            self.weaponReady = true;
         } else {
             radiusDelta = 1;
             nParticles = 10;
@@ -256,7 +257,7 @@ function PlayerSuperWeapon(specs) {
 
         // Fire weapon
         self.fire();
-    }
+    };
     
     let explosionRadiusDelta = 3;
 
@@ -264,7 +265,7 @@ function PlayerSuperWeapon(specs) {
         // send a pulse wave in all directions by increasing the radius
         self.radius += explosionRadiusDelta * chargeLevel;
         particles.reset();
-    }
+    };
     
     self.render = function() {
         if (state === 0) {
@@ -276,8 +277,10 @@ function PlayerSuperWeapon(specs) {
             return;
         }
 
-        Graphics.drawCircle(self);
-    }
+        if (self.weaponReady) {
+            Graphics.drawCircle(self);
+        }
+    };
 
     return self;
 }

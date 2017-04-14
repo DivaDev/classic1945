@@ -29,6 +29,38 @@ let CollisionSystem = (function() {
         return enemiesHit;
     }
 
+    function RectCircleColliding(circle, rect){
+        // return true if the rectangle and circle are colliding
+        // http://stackoverflow.com/questions/21089959/detecting-collision-of-rectangle-with-circle
+        let distX = Math.abs(circle.x - rect.x - rect.width / 2);
+        let distY = Math.abs(circle.y - rect.y-rect.height / 2);
+
+        if (distX > (rect.width / 2 + circle.radius)) { return false; }
+        if (distY > (rect.height/2 + circle.radius)) { return false; }
+
+        if (distX <= (rect.width / 2)) { return true; }
+        if (distY <= (rect.height / 2)) { return true; }
+
+        let dx=distX-rect.width / 2;
+        let dy=distY-rect.height / 2;
+        return (dx * dx + dy * dy <= (circle.radius * circle.radius));
+    }
+
+    function checkPlayerSuperWeaponWithEnemies(enemies, player) {
+        if (enemies.length === 0) {
+            return; // no enemies on map
+        }
+
+        let tempEnemies = enemies;
+        for (let i = 0; i < tempEnemies.length; i++) {
+            if (RectCircleColliding(player.superWeapon, tempEnemies[i]) && player.superWeapon.weaponReady) {
+                AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
+                enemies.splice(i, 1);
+            }
+        }
+
+    }
+
     function didEnemyMissilesHitPlayer(enemyMissiles, player) {
 
         if (enemyMissiles.length === 0) {
@@ -63,7 +95,8 @@ let CollisionSystem = (function() {
 
     return {
         didPlayerMissilesHitEnemy: didPlayerMissilesHitEnemy,
-        didEnemyMissilesHitPlayer : didEnemyMissilesHitPlayer
+        didEnemyMissilesHitPlayer : didEnemyMissilesHitPlayer,
+        checkPlayerSuperWeaponWithEnemies: checkPlayerSuperWeaponWithEnemies,
     };
 
 }());
