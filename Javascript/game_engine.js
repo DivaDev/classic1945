@@ -83,7 +83,15 @@ let GameEngine = (function() {
         });
     }
 
+    let fps = 0;
+    let lastRun;
+    let delta;
+
     function gameloop(timestamp) {
+
+        delta = (new Date().getTime() - lastRun) / 1000;
+        lastRun = new Date().getTime();
+
         let progress = timestamp - lastRender;
 
         update(progress);
@@ -113,6 +121,7 @@ let GameEngine = (function() {
 
         if (timerInterval > 1000) {
             timerInterval = 0;
+            fps = 1 / delta; // this could be placed anywhere it will still work
         } else {
             timerInterval += elapsedTime;
         }
@@ -140,9 +149,17 @@ let GameEngine = (function() {
             // At bottom so the text appears on top of everything else
             showPause();   
         }
-    }
 
-    
+        // Show Frames Per Second
+        graphics.drawText({
+            font: "12px Arial",
+            color: "#FFFFFF",
+            text: 'FPS: ' + fps.toFixed(0).toString(),
+            x: graphics.width - 47,
+            y: graphics.height - 5
+        })
+
+    }
 
     requestAnimationFrame(gameloop);
     
