@@ -193,13 +193,34 @@ let Settings = (function() {
         });
     }
 
+    let textPlaceHolder = {
+          text: "Press new key",
+          direction: 'NONE',
+    };
 
+    function resetText() {
+        table.forEach((row) => {
+            if (row.direction === textPlaceHolder.direction) {
+                const temp = row.keyPosition.text;
+                row.keyPosition.text = textPlaceHolder.text;
+                textPlaceHolder.text = temp;
+                return;
+            }
+        });
+    }
 
     function handleMouseClick(event) {
+        resetText();
+
         table.forEach(function(row) {
             if (isMouseWithinRow(event, row)) {
                 row.controls.fillStyle = highlightFillStyle;
                 row.isHighlighted = true;
+
+                const temp = row.keyPosition.text;
+                row.keyPosition.text = textPlaceHolder.text;
+                textPlaceHolder.text = temp;
+                textPlaceHolder.direction = row.direction;
             } else {
                 row.controls.fillStyle = defaultFillStyle;
                 row.isHighlighted = false;
@@ -218,7 +239,6 @@ let Settings = (function() {
 
             let status = (toggleSound.isOn) ? 'ON': 'OFF';
             toggleSound.keyPosition.text = status;
-            setKeyTextCenter(toggleSound);
         }
     }
 
@@ -285,9 +305,10 @@ let Settings = (function() {
             case 224: // Firefox
                 break;
             default:
+                textPlaceHolder.text = "Press New Key";
+                textPlaceHolder.direction = 'NONE';
                 row.keyPosition.text = event.key;
                 inputDispatch[row.direction].keycode = event.keyCode;
-                setKeyTextCenter(row);
                 break
         }
     }
@@ -308,7 +329,9 @@ let Settings = (function() {
     }
 
     function update(elapsedTime) {
-
+        table.forEach((row) => {
+            setKeyTextCenter(row);
+        });
     }
 
     function render() {
