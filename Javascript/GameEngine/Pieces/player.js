@@ -54,30 +54,32 @@ function Player(startX, startY) {
 
     function coolDownWeapons() {
         self.superWeapon = new PlayerSuperWeapon({
-        x: self.x + self.width / 2,
-        y: self.y + 10,
-        radius: self.width / 2,
-        startAngle: 0,
-        endAngle: 2 * Math.PI,
-        fillStyle: '#5394ee',
-        strokeStyle: '#d6e2fb',
-        lineWidth: 1,
-        innerRadius: 5,
-        outerRadius: self.width / 2,
-        gradient: {
-            colors: [{
-                offset: 0,
-                color: 'white',
-            }, {
-                offset: 0.5,
-                color: 'lightblue',
-            }, {
-                offset: 1,
-                color: '#1e71e3'
-            }]
-        }
-    });
+            x: self.x + self.width / 2,
+            y: self.y + 10,
+            radius: self.width / 2,
+            startAngle: 0,
+            endAngle: 2 * Math.PI,
+            fillStyle: '#5394ee',
+            strokeStyle: '#d6e2fb',
+            lineWidth: 1,
+            innerRadius: 5,
+            outerRadius: self.width / 2,
+            gradient: {
+                colors: [{
+                    offset: 0,
+                    color: 'white',
+                }, {
+                    offset: 0.5,
+                    color: 'rgba(119, 157, 223, 0.5)',
+                }, {
+                    offset: 1,
+                    color: '#1e71e3'
+                }]
+            }
+        });
     }
+    // context.fillStyle = 'rgba(0,0,0,0.7)';
+
 
     self.fire = function() {
         let missile = new PlayerMissile({

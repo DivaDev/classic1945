@@ -48,7 +48,6 @@ let Graphics = (function() {
     }
 
     function drawUnFilledRectangle(spec) {
-        // debugger;
         context.beginPath();
         context.lineWidth = spec.lineWidth;
         context.strokeStyle = spec.strokeStyle;
