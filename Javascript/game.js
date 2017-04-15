@@ -18,7 +18,6 @@ function Game(graphics) {
     let localInterval = 0;
     let possiblePaths = FollowPathSystem.possiblePaths;
     let enemyMissiles = [];
-    let score = 0;
 
     self.player = null;
     self.inputDispatch = null;
@@ -46,10 +45,12 @@ function Game(graphics) {
         }
 
         if (event.keyCode === 32) {
-            // self.player.willChargeSuperBeam = true;
-            self.player.chargeSuperWeapon(); 
+            willChargeSuperBeam = true;
+            fireButtonPressed = true;
         }
     }
+
+    let willChargeSuperBeam = false;
 
     function handleKeyUp(event) {
         if (event.keyCode === self.inputDispatch['RIGHT'].keycode) {
@@ -66,9 +67,9 @@ function Game(graphics) {
 
         if (event.keyCode === 32) { // space
             self.player.fire();
-            // self.player.willChargeSuperBeam = false;
             self.player.fireSuperWeapon();
-            SoundSystem.play('audio/XWing-Laser.wav');            
+            willChargeSuperBeam = false;
+            SoundSystem.play('audio/XWing-Laser.wav');
         }
     }
 
@@ -95,15 +96,31 @@ function Game(graphics) {
         }
     }
 
+    let fireButtonPressed = false;
+    let playerWeaponTimer = 0;
+
     function updatePlayer(elapsedTime) {
+
+        if (willChargeSuperBeam) {
+            playerWeaponTimer += elapsedTime;
+        } else {
+            playerWeaponTimer = 0;
+        }
+
+        if (playerWeaponTimer > 300) {
+            self.player.chargeSuperWeapon();
+        }
+
         self.player.update(elapsedTime);
+
+
         keepPlayerWithInBounds();
     }
 
     self.update = function (elapsedTime) {
 
         updatePlayer(elapsedTime);
-        score += CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
+        CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
         CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
         updateEnemies();
@@ -148,7 +165,7 @@ function Game(graphics) {
         graphics.drawText({
             font: "8px Arial",
             color: "#FFFFFF",
-            text: 'Score: ' + score.toString(),
+            text: 'Score: ' + CollisionSystem.getEnemiesHit().toString(),
             x: graphics.width - 40,
             y: 10
         });

@@ -86,6 +86,15 @@ let Graphics = (function() {
     function drawText(spec) {
         context.save();
         context.beginPath();
+
+        if (spec.hasOwnProperty('rotation')) {
+            let cx = spec.x + spec.rotation.width / 2;
+            let cy = spec.y + spec.rotation.height / 2;
+            context.translate(cx, cy);
+            context.rotate(spec.rotation.angle);
+            context.translate(-cx, -cy);
+        }
+
         context.font = spec.font;
         context.fillStyle = spec.color;
         context.fillText(spec.text, spec.x, spec.y);

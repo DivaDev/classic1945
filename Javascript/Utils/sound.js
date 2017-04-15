@@ -13,6 +13,7 @@ let SoundSystem = (function() {
     }
 
     function play(sound) {
+        return;
 
         if (!Settings.inputDispatch['SOUND'].isOn) {
             return;

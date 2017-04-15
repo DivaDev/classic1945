@@ -2,9 +2,14 @@ let CollisionSystem = (function() {
 
     const playerDamage = 20;
 
+    let enemiesHit = 0;
+
+    function getEnemiesHit() {
+        return enemiesHit;
+    }
+
     function didPlayerMissilesHitEnemy(enemies, missiles) {
 
-        let enemiesHit = 0;
 
         if (enemies.length === 0 || missiles.length === 0) {
             return enemiesHit;
@@ -26,7 +31,7 @@ let CollisionSystem = (function() {
             }
         }
 
-        return enemiesHit;
+        // return enemiesHit;
     }
 
     function RectCircleColliding(circle, rect){
@@ -53,9 +58,10 @@ let CollisionSystem = (function() {
 
         let tempEnemies = enemies;
         for (let i = 0; i < tempEnemies.length; i++) {
-            if (RectCircleColliding(player.superWeapon, tempEnemies[i]) && player.superWeapon.weaponReady) {
+            if (RectCircleColliding(player.superWeapon, tempEnemies[i]) && player.superWeapon.isFiring) {
                 AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
                 enemies.splice(i, 1);
+                enemiesHit++;
             }
         }
 
@@ -97,6 +103,7 @@ let CollisionSystem = (function() {
         didPlayerMissilesHitEnemy: didPlayerMissilesHitEnemy,
         didEnemyMissilesHitPlayer : didEnemyMissilesHitPlayer,
         checkPlayerSuperWeaponWithEnemies: checkPlayerSuperWeaponWithEnemies,
+        getEnemiesHit: getEnemiesHit,
     };
 
 }());

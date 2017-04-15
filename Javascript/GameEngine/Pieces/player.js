@@ -78,8 +78,6 @@ function Player(startX, startY) {
             }
         });
     }
-    // context.fillStyle = 'rgba(0,0,0,0.7)';
-
 
     self.fire = function() {
         let missile = new PlayerMissile({
@@ -119,6 +117,7 @@ function Player(startX, startY) {
 
             if (superWeaponTimer < 1500) {
                 superWeaponTimer += elapsedTime;
+                self.superWeapon.updateChargePercent(superWeaponTimer);
             } else {
                 // After one second turn off the super weapon
                 superWeaponState = superWeaponStages.NONE;
@@ -167,7 +166,6 @@ function PlayerSuperWeapon(specs) {
     // specs should have: x, y, radius, startAngle, endAngle, color
     let self = specs;
     self.willFire = false;
-    let chargePercent = 0;
     let timerInterval = 0;
     let state = 0;
 
@@ -175,52 +173,23 @@ function PlayerSuperWeapon(specs) {
     let particleTimer = 0;    
 
     let particles = ParticleSystem({
-        center: {x: 300, y: 300},
-        speed: {mean: 30, stdev: 15},
-        lifetime: {mean: 1, stdev: 0.25}
+        center: { x: 300, y: 300 },
+        speed: { mean: 30, stdev: 15 },
+        lifetime: { mean: 1, stdev: 0.25 }
     }, Graphics);
 
-    // let pulseOutward = true;
-    // function pulse(elapsedTime) {
-    //     if (timerInterval < 1000) {
-    //         radiusDelta = 0.1;
-    //     } else if (timerInterval < 3000) {
-    //         radiusDelta = 0.5;
-    //     } else {
-    //         radiusDelta = 1;
-    //     }
-
-    //     timerInterval += elapsedTime;
-
-    //     if (pulseOutward) {
-    //         self.radius += radiusDelta;
-    //         chargePercent += 5;
-    //     } else {
-    //         self.radius -= radiusDelta;
-    //         chargePercent -= 5;
-    //     }
-
-    //     chargeLevel = (chargeLevel > 1) ? 1 : (chargeLevel += 1 / 100);
-
-    //     if (chargePercent > 100) {
-    //         pulseOutward = false;
-    //     } 
-    //     if (chargePercent < 0) {
-    //         pulseOutward = true;
-    //     }
-    // }
-
     let nParticles = 0;
-    self.weaponReady = false;
+    self.ready = false;
     function charge(elapsedTime, player) {
         
-        if (timerInterval < 2000) {
+        if (timerInterval < 2500) {
             radiusDelta = 0.1;
             nParticles = 2;
-        } else if (timerInterval < 5000) {
+            self.ready = false;
+        } else if (timerInterval < 6000) {
             radiusDelta = 0.5;
             nParticles = 4;
-            self.weaponReady = true;
+            self.ready = true;
         } else {
             radiusDelta = 1;
             nParticles = 10;
@@ -234,12 +203,20 @@ function PlayerSuperWeapon(specs) {
         }
 
         timerInterval += elapsedTime;
-        chargeLevel = (chargeLevel > 1) ? 1 : (chargeLevel += 1 / 100);
+        chargeLevel = timerInterval / 6000;
+        chargeLevel = Math.min(chargeLevel, 1);
+        chargePercent = chargeLevel;
     }
 
+    self.updateChargePercent = function(elapsedTime) {
+        let time = elapsedTime / 1500;
+        chargePercent = chargeLevel * time;
+        chargePercent = chargeLevel - chargePercent;
+    };
 
     self.update = function(elapsedTime, player, weaponState) {
         state = weaponState;
+        self.isFiring = false;
 
         if (state === 0) {
             // do nothing
@@ -251,7 +228,6 @@ function PlayerSuperWeapon(specs) {
 
         if (state === 1) {
             // charge
-            // pulse(elapsedTime);
             charge(elapsedTime, player);
             particles.update(elapsedTime);
             return;
@@ -260,16 +236,50 @@ function PlayerSuperWeapon(specs) {
         // Fire weapon
         self.fire();
     };
-    
+
+    let chargePercent = 0;
     let explosionRadiusDelta = 3;
+    self.isFiring = false;
 
     self.fire = function() {
         // send a pulse wave in all directions by increasing the radius
         self.radius += explosionRadiusDelta * chargeLevel;
+        self.isFiring = true;
         particles.reset();
     };
     
     self.render = function() {
+        // draw the charge status
+        Graphics.drawUnFilledRectangle({
+            lineWidth: 1,
+            strokeStyle: 'green',
+            x: 5,
+            y: Graphics.height - 100 - 20, // minus height - padding
+            width: 15,
+            height: 100,
+        });
+
+        Graphics.drawText({
+            font: '12px sans-serif',
+            text: "CHARGE",
+            x: 17, // 12px + 5( the width of the charge box) = 17
+            y: Graphics.height - 50,
+            color: 'red',
+            rotation: {
+                angle: -Math.PI * .5,
+                width: 10,
+                height: 10
+            },
+        });
+
+        Graphics.drawRectangle({
+            x: 5,
+            y: Graphics.height - 20,
+            width: 15,
+            height: -chargePercent * 100,
+            fillStyle: 'rgba(0, 225, 0, 0.5)',
+        });
+
         if (state === 0) {
             return;
         }
@@ -279,7 +289,7 @@ function PlayerSuperWeapon(specs) {
             return;
         }
 
-        if (self.weaponReady) {
+        if (self.ready) {
             Graphics.drawCircle(self);
         }
     };
