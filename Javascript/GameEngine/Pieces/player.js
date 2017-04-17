@@ -1,5 +1,6 @@
 function Player(startX, startY) {
     const hitPoints = 100;
+    const weaponDuration = 2000;
     let self = {};
     let movementSpeed = 4;
     let willFireOnRight = true;    
@@ -67,16 +68,17 @@ function Player(startX, startY) {
             gradient: {
                 colors: [{
                     offset: 0,
-                    color: 'white',
+                    color: 'rgba(255, 255, 255, 0.5)',
                 }, {
                     offset: 0.5,
                     color: 'rgba(119, 157, 223, 0.5)',
                 }, {
                     offset: 1,
-                    color: '#1e71e3'
+                    // color: '#1e71e3'
+                    color: 'rgba(95, 188, 211, 0.5)'
                 }]
             }
-        });
+        }, weaponDuration);
     }
 
     self.fire = function() {
@@ -115,7 +117,14 @@ function Player(startX, startY) {
 
         if (superWeaponState === superWeaponStages.FIRE) {
 
-            if (superWeaponTimer < 1500) {
+            if (superWeaponTimer < weaponDuration) { // weapon last two seconds
+                if (superWeaponTimer > 1500) {
+                    // start changing the opacity so the OTT fades out
+                    for (let i = 0; i < 3; i++) {
+                        self.superWeapon.gradient.colors[i].color = self.superWeapon.gradient.colors[i].color.substring(0, self.superWeapon.gradient.colors[i].color.lastIndexOf(' ')) + ' ' + self.superWeapon.alpha + ')';
+                    }
+                    self.superWeapon.alpha -= 0.05;
+                }
                 superWeaponTimer += elapsedTime;
                 self.superWeapon.updateChargePercent(superWeaponTimer);
             } else {
@@ -162,9 +171,12 @@ function Player(startX, startY) {
 
 let radiusDelta = 0.1;
 
-function PlayerSuperWeapon(specs) {
+function PlayerSuperWeapon(specs, weaponDuration) {
     // specs should have: x, y, radius, startAngle, endAngle, color
+    const duration = weaponDuration;
     let self = specs;
+    self.alpha = 0.5;
+    
     self.willFire = false;
     let timerInterval = 0;
     let state = 0;
@@ -209,7 +221,7 @@ function PlayerSuperWeapon(specs) {
     }
 
     self.updateChargePercent = function(elapsedTime) {
-        let time = elapsedTime / 1500;
+        let time = elapsedTime / duration;
         chargePercent = chargeLevel * time;
         chargePercent = chargeLevel - chargePercent;
     };
