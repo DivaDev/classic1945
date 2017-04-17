@@ -7,9 +7,10 @@ const GameStatus = {
     MENU: 0,
     PLAY: 1,
     INSTRUCTIONS: 2,
-    SETTINGS: 3,
-    CREDITS: 4,
-    PAUSE: 5
+    HIGH_SCORES: 3,
+    SETTINGS: 4,
+    CREDITS: 5,
+    PAUSE: 6
 };
 
 let GameEngine = (function() {

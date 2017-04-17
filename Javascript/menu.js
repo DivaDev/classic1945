@@ -2,14 +2,14 @@
 let Menu = (function() {
     let graphics = Graphics;
 
-    let buttonX = [192, 110, 149, 160];
+    let buttonX = [graphics.width/2 - 25, graphics.width/2 - 60, graphics.width/2 - 65, graphics.width/2 - 45, graphics.width/2 - 40];
     // let buttonY = [100, 140, 180, 220];
-    let buttonY = [graphics.height / 4 + 40, graphics.height / 4 + 80, graphics.height / 4 + 120, graphics.height / 4 + 160]
+    let buttonY = [graphics.height / 5 + 40, graphics.height / 5 + 80, graphics.height / 5 + 120, graphics.height / 5 + 160, graphics.height / 5 + 200]
 
 	let mouseX;
 	let mouseY;
-	let buttonWidth = [96, 260, 182, 160];
-	let buttonHeight = [40, 40, 40, 40];
+	let buttonWidth = [53, 128, 137, 93, 83];
+	let buttonHeight = [40, 40, 40, 40, 40];
 
     let backgroundImage = {
         image: new Image(),
@@ -17,38 +17,6 @@ let Menu = (function() {
         y: 0,
         width: graphics.width,
         height: graphics.height
-    };
-
-    let playImage = {
-        image: new Image(),
-        x: buttonX[0],
-        y: buttonY[0],
-        width: buttonWidth[0],
-        height: buttonHeight[0]
-    };
-
-    let instructionsImage = {
-        image: new Image(),
-        x: buttonX[1],
-        y: buttonY[1],
-        width: buttonWidth[1],
-        height: buttonHeight[1]
-    };
-
-    let settingsImage = {
-        image: new Image(),
-        x: buttonX[2],
-        y: buttonY[2],
-        width: buttonWidth[2],
-        height: buttonHeight[2]
-    };
-
-    let creditsImage = {
-        image: new Image(),
-        x: buttonX[3],
-        y: buttonY[3],
-        width: buttonWidth[3],
-        height: buttonHeight[3]
     };
 
     let leftShipImage = {
@@ -68,10 +36,10 @@ let Menu = (function() {
     };
     
     backgroundImage.image.src = "Images/background.png";
-    playImage.image.src = "Images/play.png";
-    instructionsImage.image.src = "Images/instructions.png";
-    settingsImage.image.src = "Images/settings.png";
-    creditsImage.image.src = "Images/credits.png";
+    // playImage.image.src = "Images/play.png";
+    // instructionsImage.image.src = "Images/instructions.png";
+    // settingsImage.image.src = "Images/settings.png";
+    // creditsImage.image.src = "Images/credits.png";
     leftShipImage.image.src = "Images/rsz_xwing.png";
     rightShipImage.image.src = "Images/rsz_xwing.png";
 
@@ -87,24 +55,27 @@ let Menu = (function() {
             scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
             scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
 
+        console.log(rect);
         return {
             x: (event.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
             y: (event.clientY - rect.top) * scaleY     // been adjusted to be relative to element
         }
     }
-    
+
     function handleMouseMove(event) {
         let coord = getMousePos(event);
         mouseX = coord.x;
         mouseY = coord.y;
 
+
+
 		for(let i = 0; i < buttonX.length; i++){
 			if(mouseX > buttonX[i] && mouseX < buttonX[i] + buttonWidth[i]){
 				if(mouseY > buttonY[i] && mouseY < buttonY[i] + buttonHeight[i]){
-                    leftShipImage.x = buttonX[i] - leftShipImage.width;
-					leftShipImage.y = buttonY[i] + 2;
+                    leftShipImage.x = buttonX[i] - leftShipImage.width - 5;
+					leftShipImage.y = buttonY[i] - 10;
 					rightShipImage.x = buttonX[i] + buttonWidth[i];
-					rightShipImage.y = buttonY[i] + 2;
+					rightShipImage.y = buttonY[i] - 10;
 				}
 			}
 		}
@@ -112,23 +83,28 @@ let Menu = (function() {
 
     function getSelection() {
         
-        if (leftShipImage.y === buttonY[0] + 2) {
+        if (leftShipImage.y === buttonY[0] - 10) {
             console.log("Clicked play");
             return GameStatus.PLAY;
         }
 
-        if (leftShipImage.y === buttonY[1] + 2) {
+        if (leftShipImage.y === buttonY[1] - 10) {
             console.log("Clicked Instructions");
             return GameStatus.INSTRUCTIONS;
         }
 
-        if (leftShipImage.y === buttonY[2] + 2) {
+        if (leftShipImage.y === buttonY[2] - 10) {
+            console.log("Clicked High Scores");
+            return GameStatus.HIGH_SCORES;
+        }
+
+        if (leftShipImage.y === buttonY[3] - 10) {
             console.log("Clicked Settings");
             return GameStatus.SETTINGS;
         }
 
-        if (leftShipImage.y === buttonY[3] + 2) {
-            console.log("Cliked Credits");
+        if (leftShipImage.y === buttonY[4] - 10) {
+            console.log("Clicked Credits");
             return GameStatus.CREDITS;
         }
     }
@@ -152,10 +128,46 @@ let Menu = (function() {
     }
 
     function render() {
-        graphics.drawImage(playImage);
-        graphics.drawImage(instructionsImage);
-        graphics.drawImage(settingsImage);
-        graphics.drawImage(creditsImage);
+        graphics.drawText({
+            font: "24px Arial",
+            color: "#92959b",
+            text: "Play",
+            x: buttonX[0],
+            y: buttonY[0] + 25,
+        });
+
+        graphics.drawText({
+            font: "24px Arial",
+            color: "#92959b",
+            text: "Instructions",
+            x: buttonX[1],
+            y: buttonY[1] + 25,
+        });
+
+        graphics.drawText({
+            font: "24px Arial",
+            color: "#92959b",
+            text: "High Scores",
+            x: buttonX[2],
+            y: buttonY[2] +25,
+        });
+
+        graphics.drawText({
+            font: "24px Arial",
+            color: "#92959b",
+            text: "Settings",
+            x: buttonX[3],
+            y: buttonY[3] + 25,
+        });
+
+        graphics.drawText({
+            font: "24px Arial",
+            color: "#92959b",
+            text: "Credits",
+            x: buttonX[4],
+            y: buttonY[4] + 25,
+        });
+
         graphics.drawImage(leftShipImage);
         graphics.drawImage(rightShipImage);
     }
