@@ -38,13 +38,21 @@ let Graphics = (function() {
         context.restore();
     }
 
-    function drawSettingsRect(spec) {
+    function drawRectangle(spec) {
         context.save();
         context.beginPath();
         context.fillStyle = spec.fillStyle;
         context.fillRect(spec.x, spec.y, spec.width, spec.height);
         context.stroke();
         context.restore();
+    }
+
+    function drawUnFilledRectangle(spec) {
+        context.beginPath();
+        context.lineWidth = spec.lineWidth;
+        context.strokeStyle = spec.strokeStyle;
+        context.rect(spec.x, spec.y, spec.width, spec.height);
+        context.stroke();
     }
 
     function finishDraw() {
@@ -78,11 +86,55 @@ let Graphics = (function() {
     function drawText(spec) {
         context.save();
         context.beginPath();
+
+        if (spec.hasOwnProperty('rotation')) {
+            let cx = spec.x + spec.rotation.width / 2;
+            let cy = spec.y + spec.rotation.height / 2;
+            context.translate(cx, cy);
+            context.rotate(spec.rotation.angle);
+            context.translate(-cx, -cy);
+        }
+
         context.font = spec.font;
         context.fillStyle = spec.color;
         context.fillText(spec.text, spec.x, spec.y);
         context.fill();
         context.restore();
+    }
+
+    function drawCircle(spec) {
+        context.beginPath();
+
+        let gradient = context.createRadialGradient(
+            spec.x,
+            spec.y,
+            spec.innerRadius,
+            spec.x,
+            spec.y,
+            spec.radius
+        );
+
+        if (spec.hasOwnProperty('gradient')) {
+            spec.gradient.colors.forEach((section) => {
+                gradient.addColorStop(section.offset, section.color);
+            });
+        }
+
+        context.arc(spec.x, spec.y, spec.radius, spec.startAngle, spec.endAngle, false);
+        context.closePath();
+        context.lineWidth = spec.lineWidth;
+        context.fillStyle = gradient;
+        context.fill();
+        context.stroke();
+    }
+
+    function drawParticleCircle(spec) {
+        context.beginPath();
+        context.arc(spec.center.x, spec.center.y, spec.size, 0, 2 * Math.PI);
+        context.fillStyle = spec.fillStyle;
+        context.strokeStyle = 'white';
+        context.fill();
+        context.stroke();
     }
 
     return {
@@ -97,6 +149,9 @@ let Graphics = (function() {
         drawBezierCurve: drawBezierCurve,
         drawQuadraticCurve: drawQuadraticCurve,
         drawText: drawText,
-        drawRectangle: drawSettingsRect,
+        drawRectangle: drawRectangle,
+        drawUnFilledRectangle: drawUnFilledRectangle,
+        drawCircle: drawCircle,
+        drawParticleCircle: drawParticleCircle,
     }
 }());

@@ -7,6 +7,8 @@ const PathTypes = {
 };
 
 function Game(graphics) {
+    FollowPathSystem.loadPaths();
+    
     let self = {};
     let enemies = [];
     let sendEnemies = false;
@@ -14,87 +16,8 @@ function Game(graphics) {
     let countLaunchedEnemies = 0;
     let timerInterval = 0;
     let localInterval = 0;
-    let possiblePaths = [];
-
-    const aroundTheMapBezier = {
-        type: PathTypes.BEZIER,
-        startX: 0,
-        startY: 0,
-        cp1x: graphics.width / 2,
-        cp1y: 200,
-        cp2x: graphics.width / 2,
-        cp2y: 200,
-        endX: graphics.width,
-        endY: 0
-    };
-
-    const aroundTheMapQuad = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 0,
-        cpx: graphics.width / 2,
-        cpy: 200,
-        endX: graphics.width,
-        endY: 0
-    };
-
-    const leftCurveOut = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 0,
-        cpx: graphics.width / 2,
-        cpy: graphics.height / 2,
-        endX: 0,
-        endY: graphics.height
-    };
-
-    const rightCurveOut = {
-        type: PathTypes.QUAD,
-        startX: graphics.width,
-        startY: 0,
-        cpx: graphics.width / 2,
-        cpy: graphics.height / 2,
-        endX: graphics.width,
-        endY: graphics.height
-    };
-
-    const leftToBottomMiddle = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 0,
-        cpx: graphics.width / 2 - 25,
-        cpy: graphics.height / 2 - 25,
-        endX: graphics.width / 2 - 25,
-        endY: graphics.height
-    };
-
-    const rightToBottomMiddle = {
-        type: PathTypes.QUAD,
-        startX: graphics.width,
-        startY: 0,
-        cpx: graphics.width / 2 + 25,
-        cpy: graphics.height / 2 + 25,
-        endX: graphics.width / 2 + 25,
-        endY: graphics.height
-    };
-
-    const leftToBottomMiddleOffset = {
-        type: PathTypes.QUAD,
-        startX: 0,
-        startY: 50,
-        cpx: graphics.width / 2 - 50,
-        cpy: graphics.height / 2 - 50,
-        endX: graphics.width / 2 - 50,
-        endY: graphics.height
-    };
-
-    possiblePaths.push(aroundTheMapBezier);
-    possiblePaths.push(aroundTheMapQuad);
-    possiblePaths.push(leftCurveOut);
-    possiblePaths.push(rightCurveOut);
-    possiblePaths.push(leftToBottomMiddle);
-    possiblePaths.push(rightToBottomMiddle);
-    possiblePaths.push(leftToBottomMiddleOffset);
+    let possiblePaths = FollowPathSystem.possiblePaths;
+    let enemyMissiles = [];
 
     self.player = null;
     self.inputDispatch = null;
@@ -120,7 +43,14 @@ function Game(graphics) {
         } else if (event.keyCode === self.inputDispatch['UP'].keycode) {
             self.player.willMoveUp = true;
         }
+
+        if (event.keyCode === 32) {
+            willChargeSuperBeam = true;
+            fireButtonPressed = true;
+        }
     }
+
+    let willChargeSuperBeam = false;
 
     function handleKeyUp(event) {
         if (event.keyCode === self.inputDispatch['RIGHT'].keycode) {
@@ -137,25 +67,63 @@ function Game(graphics) {
 
         if (event.keyCode === 32) { // space
             self.player.fire();
+            self.player.fireSuperWeapon();
+            willChargeSuperBeam = false;
             SoundSystem.play('audio/XWing-Laser.wav');
         }
     }
 
-    self.update = function (elapsedTime) {
-
-        self.player.update();
-
-        CollisionSystem.didMissilesHitEnemy(enemies, self.player.missiles);
-
-
+    function updateEnemies() {
         enemies.forEach(function (enemy) {
             enemy.update(self.player);
-            CollisionSystem.didEnemyMissilesHitPlayer(enemy.missiles, self.player);
+            if (enemy.willFire) {
+                enemyMissiles.push(enemy.fire(self.player));
+            }
         });
 
-        enemies = enemies.filter(function (enemy) {
+        enemies = enemies.filter((enemy) => {
             return !enemy.finished;  // Keep the non finished
         });
+
+        let missiles = enemyMissiles;
+        for (let i = 0; i < missiles.length; i++) {
+            missiles[i].update();
+
+            if (missiles[i].y < 0) {
+                // Remove missile when off the screen
+                enemyMissiles.splice(i, 1);
+            }
+        }
+    }
+
+    let fireButtonPressed = false;
+    let playerWeaponTimer = 0;
+
+    function updatePlayer(elapsedTime) {
+
+        if (willChargeSuperBeam) {
+            playerWeaponTimer += elapsedTime;
+        } else {
+            playerWeaponTimer = 0;
+        }
+
+        if (playerWeaponTimer > 300) {
+            self.player.chargeSuperWeapon();
+        }
+
+        self.player.update(elapsedTime);
+
+
+        keepPlayerWithInBounds();
+    }
+
+    self.update = function (elapsedTime) {
+
+        updatePlayer(elapsedTime);
+        CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
+        CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
+        CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
+        updateEnemies();
 
         if (timerInterval > 3000) {
             timerInterval = 0;
@@ -175,6 +143,9 @@ function Game(graphics) {
                 localInterval = 0;
                 countLaunchedEnemies++;
                 enemies.push(new Enemy(possiblePaths[chosenPath]));
+                if (chosenPath === 7) {
+                    enemies.push(new Enemy(possiblePaths[8]));
+                }
             }
 
             if (countLaunchedEnemies > 3) {
@@ -185,6 +156,20 @@ function Game(graphics) {
     };
 
     self.render = function () {
+        graphics.drawUnFilledRectangle(self.player.health.outline);
+        graphics.drawRectangle(self.player.health.fill);
+        graphics.drawText(self.player.health.text);
+
+        self.player.superWeapon.render();
+
+        graphics.drawText({
+            font: "8px Arial",
+            color: "#FFFFFF",
+            text: 'Score: ' + CollisionSystem.getEnemiesHit().toString(),
+            x: graphics.width - 40,
+            y: 10
+        });
+
         AnimationSystem.render();
         graphics.drawImage(self.player);
         self.player.missiles.forEach(function (missile) {
@@ -193,12 +178,12 @@ function Game(graphics) {
 
         enemies.forEach(function (enemy) {
             graphics.drawImage(enemy);
-            enemy.missiles.forEach(function (missile) {
-                graphics.drawSquare(missile);
-                // graphics.drawLine(missile.path);
-            });
-
         });
+
+        enemyMissiles.forEach((missile) => {
+            graphics.drawSquare(missile);
+            // graphics.drawLine(missile.path);
+        })
 
         // Play with
         // graphics.drawBezierCurve(possiblePaths[0]);
@@ -208,7 +193,27 @@ function Game(graphics) {
         // graphics.drawQuadraticCurve(possiblePaths[4]);
         // graphics.drawQuadraticCurve(possiblePaths[5]);
         // graphics.drawQuadraticCurve(possiblePaths[6]);
+        // graphics.drawQuadraticCurve(possiblePaths[7]);
+        // graphics.drawQuadraticCurve(possiblePaths[8]);
     };
+
+    function keepPlayerWithInBounds() {
+        if (self.player.x < 0) {
+            self.player.x = 0;
+        }
+
+        if (self.player.x > graphics.width - self.player.width) {
+            self.player.x = graphics.width - self.player.width;
+        }
+
+        if (self.player.y < 0) {
+            self.player.y = 0;
+        }
+
+        if (self.player.y > graphics.height - self.player.height) {
+            self.player.y = graphics.height - self.player.height;
+        }
+    }
 
     return self;
 }
@@ -216,21 +221,23 @@ function Game(graphics) {
 let AnimationSystem = (function() {
 
     let animationList = [];
-    function tieFighterExplosion(tieFighter) {
+    let explosionImages = [];
+    let playerExplosion = [];
+
+    function addExplosion(fighter, imageSource) {
 
         let sprite = {
             image: new Image(),
-            x: tieFighter.x - 128,
-            y: tieFighter.y - 128,
+            // 128 is half the size of the enemy image
+            x: fighter.x - 128 + fighter.width / 2,
+            y: fighter.y - 128 + fighter.height / 2,
             i: 0,
             interval: 0,
         };
-        sprite.image.src = "images/explosion/explosion0000.png";
 
+        sprite.image.src = imageSource;
         animationList.push(sprite);
     }
-
-    let explosionImages = [];
 
     function loadExplosions() {
         for (let i = 0; i < 155; i++) {
@@ -242,6 +249,18 @@ let AnimationSystem = (function() {
                 explosionImages[i].src = "images/explosion/explosion00" + i + ".png";
             } else {
                 explosionImages[i].src = "images/explosion/explosion0" + i + ".png";
+            }
+        }
+
+        for (let i = 0; i < 45; i++) {
+            playerExplosion.push(new Image());
+
+            if (i < 10) {
+                playerExplosion[i].src = "images/player_hit_explosion/explosion000" + i + ".png";
+            } else if (i < 100) {
+                playerExplosion[i].src = "images/player_hit_explosion/explosion00" + i + ".png";
+            } else {
+                playerExplosion[i].src = "images/player_hit_explosion/explosion0" + i + ".png";
             }
         }
     }
@@ -267,18 +286,17 @@ let AnimationSystem = (function() {
             } else {
                 animationList[i].i += 1;
             }
-
         }
     }
 
     function render() {
         animationList.forEach(function (sprite) {
             Graphics.drawImage(sprite);
-        })
+        });
     }
 
     return {
-        tieFighterExplosion: tieFighterExplosion,
+        addExplosion: addExplosion,
         update: update,
         render: render,
     }

@@ -1,5 +1,6 @@
 function Enemy(path) {
     let percent = 0;
+    let hasFired = false;    
     let self = {};
     self.image = new Image();
     self.image.src = "Images/rsz_tie_fighter.png";
@@ -10,7 +11,7 @@ function Enemy(path) {
     self.y = self.path.startY;
     self.width = 35; // image width
     self.height = 30; // image height
-    self.missiles = [];
+    self.willFire = false;    
 
     self.fire = function(player) {
         let missile = new EnemyMissile({
@@ -26,8 +27,9 @@ function Enemy(path) {
             endX: player.x + player.width / 2,
             endY: player.y + player.height / 2
         });
-
-        self.missiles.push(missile);
+        
+        self.willFire = false;
+        return missile;
     };
 
     self.update = function(player) {
@@ -36,22 +38,10 @@ function Enemy(path) {
         let percentComplete = percent / 300;
 
         if (!hasFired && percentComplete > .5) {
-            self.fire(player);
+            self.willFire = true;
             hasFired = true;
         }
-
-        let missiles = self.missiles;
-        for (let i = 0; i < missiles.length; i++) {
-            missiles[i].update();
-
-            if (missiles[i].y < 0) {
-                // Remove missile when off the screen
-                self.missiles.splice(i, 1);
-            }
-        }
     };
-
-    let hasFired = false;
 
     function move() {
         percent += 1;
