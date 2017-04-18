@@ -118,6 +118,8 @@ let GameEngine = (function() {
             Credits.update(elapsedTime);
         } else if (status === GameStatus.INSTRUCTIONS) {
             Instructions.update(elapsedTime);
+        } else if (status === GameStatus.HIGH_SCORES) {
+            HighScores.update(elapsedTime);        
         }
 
         if (timerInterval > 1000) {
@@ -144,6 +146,8 @@ let GameEngine = (function() {
             Credits.render();
         } else if (status === GameStatus.INSTRUCTIONS) {
             Instructions.render();
+        } else if (status === GameStatus.HIGH_SCORES) {
+            HighScores.render();
         }
 
         if (status === GameStatus.PAUSE) {

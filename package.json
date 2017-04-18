@@ -1,0 +1,25 @@
+{
+  "name": "classic1945",
+  "version": "1.0.0",
+  "description": "A bullet-storm style game designed with the game 1945 in mind for CS 5410 at Utah State University",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DivaDev/classic1945.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DivaDev/classic1945/issues"
+  },
+  "homepage": "https://github.com/DivaDev/classic1945#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "nodemon": "^1.11.0"
+  },
+  "devDependencies": {}
+}
