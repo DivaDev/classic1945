@@ -2,9 +2,9 @@
 let Menu = (function() {
     let graphics = Graphics;
 
-    let buttonX = [graphics.width/2 - 25, graphics.width/2 - 60, graphics.width/2 - 65, graphics.width/2 - 45, graphics.width/2 - 40];
+    let buttonX = [graphics.width / 2 - 25, graphics.width / 2 - 60, graphics.width / 2 - 65, graphics.width / 2 - 45, graphics.width / 2 - 40];
     // let buttonY = [100, 140, 180, 220];
-    let buttonY = [graphics.height / 5 + 40, graphics.height / 5 + 80, graphics.height / 5 + 120, graphics.height / 5 + 160, graphics.height / 5 + 200]
+    let buttonY = [graphics.height / 5 + 40, graphics.height / 5 + 80, graphics.height / 5 + 120, graphics.height / 5 + 160, graphics.height / 5 + 200];
 
 	let mouseX;
 	let mouseY;
@@ -36,10 +36,6 @@ let Menu = (function() {
     };
     
     backgroundImage.image.src = "Images/background.png";
-    // playImage.image.src = "Images/play.png";
-    // instructionsImage.image.src = "Images/instructions.png";
-    // settingsImage.image.src = "Images/settings.png";
-    // creditsImage.image.src = "Images/credits.png";
     leftShipImage.image.src = "Images/rsz_xwing.png";
     rightShipImage.image.src = "Images/rsz_xwing.png";
 
@@ -47,7 +43,6 @@ let Menu = (function() {
     let backgroundY = -1 * graphics.height;
 
     let canvas = document.getElementById('canvas');
-    willDisplay();
 
     function  getMousePos(event) {
         // http://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas
@@ -55,7 +50,6 @@ let Menu = (function() {
             scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
             scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
 
-        console.log(rect);
         return {
             x: (event.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
             y: (event.clientY - rect.top) * scaleY     // been adjusted to be relative to element
@@ -66,8 +60,6 @@ let Menu = (function() {
         let coord = getMousePos(event);
         mouseX = coord.x;
         mouseY = coord.y;
-
-
 
 		for(let i = 0; i < buttonX.length; i++){
 			if(mouseX > buttonX[i] && mouseX < buttonX[i] + buttonWidth[i]){
@@ -176,6 +168,8 @@ let Menu = (function() {
         graphics.drawImage(backgroundImage);
     }
 
+    willDisplay();
+
     return {
         update: update,
         render: render,
@@ -201,8 +195,6 @@ function AnimateGameLoading(graphics) {
         self.leftShip = leftShip;
         self.rightShip = rightShip;
         self.finished = false;
-        console.log('created');
-        console.log(self.finished);
         self.leftShipPath = {
             startX: self.leftShip.x,
             startY: self.leftShip.y,
