@@ -52,6 +52,8 @@ function Player(startX, startY) {
     };
 
     self.willChargeSuperBeam = false;
+    self.lives = 4;
+    self.gameOver = false;
 
     function coolDownWeapons() {
         self.superWeapon = new PlayerSuperWeapon({
@@ -133,6 +135,12 @@ function Player(startX, startY) {
                 superWeaponTimer = 0;
                 coolDownWeapons();
             }
+        }
+
+        //check health status
+        if(self.health.hitPoints <= 0 && self.lives > 0){
+            self.lives--;
+            self.health.hitPoints = 100;
         }
     };
 
