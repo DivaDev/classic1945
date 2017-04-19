@@ -1,0 +1,14 @@
+{
+    "all": [
+        {
+            "user": "me",
+            "score": 123,
+            "date": "today"
+        },
+        {
+            "user": "me",
+            "score": 123,
+            "date": "today"
+        }
+    ]
+}
