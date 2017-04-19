@@ -1,52 +1,30 @@
 
-let fs = require('fs');
 let express = require('express');
 let app = express();
-// let server = app.listen(3000, handleRequest);
-let http = require('http').createServer(app);
+let fs = require('fs');
+let http = require('http');
+let path = require('path');
+let scores = require('./routes/scores'); // scores.js
 
-
-let data = fs.readFileSync('./db/scores.json'); // Want to use sync version
-let scores = JSON.parse(data);
-
-// app.use(express.static('./'));
-app.get('/', (request, response) => {
-    response.sendFile(__dirname + '/index.html');
-});
+app.set('port', process.env.PORT || 3000);
 
 app.use('/', express.static(__dirname + '/'));
-
-http.listen(3000);
-
-// // http://localhost:3000/scores/all
-app.get('/scores/all', (request, response) => {
-    response.send(scores);
+app.get('/', (request, response) => {
+    response.render('index.html');
 });
 
-app.post('/scores/add/:user/:score/:date', (request, response) => {
-    const params = request.params;
-    const user = params.user;
-    const score = Number(params.score);
-    const date = params.date;
-    
-    scores.all.push({
-        "user": user,
-        "score": score,
-        "date": date
-    });
+app.use(express.static(path.join(__dirname, 'routes')));
 
-    const data = JSON.stringify(scores, null, 4);  // Do not resign to scores
-
-    fs.writeFile('./db/scores.json', data, (error) => {
-        const reply = {
-            status: "success",
-            'user': user,
-            "score": score,
-            "date": date
-        };
-
-        response.send(reply);
-    });
+http.createServer(app).listen(app.get('port'), () => {
+    console.log('Express server is listening on port ' + app.get('port'));
 });
 
-console.log('server is listening on port 3000...');
+// Find the all and add functions in scores.js
+app.get('/v1/scores/all', scores.all);
+app.post('/v1/scores/add/:user/:score/:date', scores.add);
+
+// Indicate any other api request are not implemented
+app.all('/v1/*', (request, response) => {
+    response.writeHead(501);
+    response.end();
+});

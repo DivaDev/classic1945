@@ -6,9 +6,14 @@
             "date": "today"
         },
         {
-            "user": "me",
-            "score": 123,
-            "date": "today"
+            "user": "sally",
+            "score": 65,
+            "date": "tomorrow"
+        },
+        {
+            "user": "sally",
+            "score": 65,
+            "date": "tomorrow"
         }
     ]
 }

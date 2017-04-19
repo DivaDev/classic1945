@@ -55,41 +55,27 @@ let HighScores = (function() {
 
     const width = widthOfTable / 3;
     const height = heightOfTable / 5;
+    // post("http://localhost:3000/db/scores.json"
+    function add(name, score, date) {
+        // /v1/scores/add/:user/:score/:date
+        $.post("/v1/scores/add/" + name + "/" + score + "/" + date).done(function(data){
+            console.log('Scored saved!');
+        });
+    }
 
-    // $(document).ready(function() {
+    // function fetchScoresFromServer() {
     //     $.getJSON('./db/scores.json', function(data) {
     //         scores = data.all;
     //         console.log(scores);
     //     });
-
-    //     // $.post("./db/scores.json", function(data, status){
-    //     //     alert("Data: " + data + "\nStatus: " + status);
-    //     // });
-
-    //     // $.post('./db/scores.json', {"something": 123});
-
-    //     // submitHighscore();
-    // })
-
-    // post("http://localhost:3000/db/scores.json"
-    function add(name, score, date) {
-        // $.post("/scores/add/" + name + "/" + score + "/" + date, { name: "John", time: "2pm" })
-        //     .done(function( data ) {
-        //         console.log("success");
-        // });
-
-        $.post("/scores/add/" + name + "/" + score + "/" + date).done(function(data){
-            console.log('Scored saved!');
-        });
-        fetchScoresFromServer();
-    }
+    // }
 
     function fetchScoresFromServer() {
-        $.getJSON('./db/scores.json', function(data) {
-            scores = data.all;
-            console.log(scores);
+        $.get('v1/scores/all').done(function(data) {
+            scores = data;
         });
     }
+    fetchScoresFromServer();
 
     return {
         update: update,
