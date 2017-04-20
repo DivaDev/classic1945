@@ -21,6 +21,7 @@ function Game(graphics) {
 
     self.player = null;
     self.inputDispatch = null;
+    self.gameOver = false;
 
     self.initialize = function (controls) {
         console.log('start game');
@@ -113,7 +114,6 @@ function Game(graphics) {
 
         self.player.update(elapsedTime);
 
-
         keepPlayerWithInBounds();
     }
 
@@ -125,7 +125,7 @@ function Game(graphics) {
         CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
         updateEnemies();
 
-        if (timerInterval > 3000) {
+        if (timerInterval > 2500) {
             timerInterval = 0;
             sendEnemies = true;
             chosenPath = Math.floor((Math.random() * possiblePaths.length));
@@ -153,9 +153,34 @@ function Game(graphics) {
                 countLaunchedEnemies = 0;
             }
         }
+
+        if(self.player.lives <= 0){ // check for a game over
+
+            self.gameOver = true;
+        }
     };
 
     self.render = function () {
+
+        if(self.gameOver){
+            graphics.drawText({
+                font: "36px Arial",
+                color: "#FF0000",
+                text: 'GAME OVER!',
+                x: graphics.width/2 - 110,
+                y: graphics.height/2
+            });
+
+            graphics.drawText({
+                font: "24px Arial",
+                color: "#FFFFFF",
+                text: 'Final score: ' + CollisionSystem.getEnemiesHit().toString(),
+                x: graphics.width/2 - 70,
+                y: graphics.height/2 + 40
+            });
+            return;
+        }
+
         graphics.drawUnFilledRectangle(self.player.health.outline);
         graphics.drawRectangle(self.player.health.fill);
         graphics.drawText(self.player.health.text);
@@ -183,7 +208,7 @@ function Game(graphics) {
         enemyMissiles.forEach((missile) => {
             graphics.drawSquare(missile);
             // graphics.drawLine(missile.path);
-        })
+        });
 
         // Play with
         // graphics.drawBezierCurve(possiblePaths[0]);

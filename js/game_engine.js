@@ -10,7 +10,8 @@ const GameStatus = {
     HIGH_SCORES: 3,
     SETTINGS: 4,
     CREDITS: 5,
-    PAUSE: 6
+    PAUSE: 6,
+    GAME_OVER: 7
 };
 
 let GameEngine = (function() {
@@ -26,6 +27,12 @@ let GameEngine = (function() {
 
     let canvas = document.getElementById('canvas');
     canvas.addEventListener('click', function() {
+
+        if(game.gameOver){
+            status = GameStatus.MENU;
+            menu.willDisplay();
+            return;
+        }
 
         if(status === GameStatus.PAUSE){
             status = GameStatus.PLAY;
@@ -103,6 +110,10 @@ let GameEngine = (function() {
     }
 
     function update(elapsedTime) {
+
+        if(game.gameOver){
+            return;
+        }
 
         if(status === GameStatus.PAUSE){
             return;
