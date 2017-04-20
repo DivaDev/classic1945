@@ -19,7 +19,7 @@ function ParticleSystem(spec, graphics) {
         // Creates one particle
         let vector = Random.nextCircleVector();
         let p = {
-            size: Random.nextGaussian(2, 1),
+            size: Random.nextGaussian(0.25, 0.12),
             center: {x: x + vector.x * 30, y: y + vector.y * 30},
             direction: vector,
             speed: Random.nextGaussian(spec.speed.mean, spec.speed.stdev), // pixels per second
