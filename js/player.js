@@ -52,7 +52,7 @@ function Player(startX, startY) {
     };
 
     self.willChargeSuperBeam = false;
-    self.lives = 4;
+    self.lives = 1;
     self.gameOver = false;
 
     function coolDownWeapons() {
@@ -141,6 +141,7 @@ function Player(startX, startY) {
         if(self.health.hitPoints <= 0 && self.lives > 0){
             self.lives--;
             self.health.hitPoints = 100;
+            // self.superWeapon = null;
         }
     };
 
@@ -177,11 +178,9 @@ function Player(startX, startY) {
     return self;
 }
 
-let radiusDelta = 0.1;
-
 function PlayerSuperWeapon(specs, weaponDuration) {
     // specs should have: x, y, radius, startAngle, endAngle, color
-    const duration = weaponDuration;
+    const duration = weaponDuration;    
     let self = specs;
     self.alpha = 0.5;
     
@@ -190,9 +189,9 @@ function PlayerSuperWeapon(specs, weaponDuration) {
     let state = 0;
 
     let chargeLevel = 0; // range between 0 and 1
-    let particleTimer = 0;    
+    let particleTimer = 0;
 
-    let particles = ParticleSystem({
+    let particles = new ParticleSystem({
         center: { x: 300, y: 300 },
         speed: { mean: 30, stdev: 15 },
         lifetime: { mean: 1, stdev: 0.25 }
@@ -203,15 +202,12 @@ function PlayerSuperWeapon(specs, weaponDuration) {
     function charge(elapsedTime, player) {
         
         if (timerInterval < 2500) {
-            radiusDelta = 0.1;
             nParticles = 2;
             self.ready = false;
         } else if (timerInterval < 6000) {
-            radiusDelta = 0.5;
             nParticles = 4;
             self.ready = true;
         } else {
-            radiusDelta = 1;
             nParticles = 10;
         }
         

@@ -18,6 +18,7 @@ function Game(graphics) {
     let localInterval = 0;
     let possiblePaths = FollowPathSystem.possiblePaths;
     let enemyMissiles = [];
+    let willAddHighScore = true;
 
     self.player = null;
     self.inputDispatch = null;
@@ -27,9 +28,22 @@ function Game(graphics) {
         console.log('start game');
         self.player = new Player(graphics.width / 2, graphics.height - 20);
         self.inputDispatch = controls;
+        willAddHighScore = true;
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
+    };
+
+    self.reset = function () {
+        self.gameOver = false;
+        enemies.length = 0;
+        enemyMissiles.length = 0;
+        self.player = null;
+        willAddHighScore = true;
+        timerInterval = 0;
+        localInterval = 0;
+        countLaunchedEnemies = 0;
+        AnimationSystem.reset();
     };
 
     function handleKeyDown(event) {
@@ -155,29 +169,51 @@ function Game(graphics) {
         }
 
         if(self.player.lives <= 0){ // check for a game over
-
             self.gameOver = true;
+            saveScore(CollisionSystem.getEnemiesHit());
+            willAddHighScore = false;
         }
     };
 
-    self.render = function () {
+    function saveScore(score) {
+        if (willAddHighScore) {
+            let name = prompt("You deserve a plaque! What is your name?")
+            let today = new Date();
+            let dd = today.getDate();
+            let mm = today.getMonth() + 1;  //January is 0!
+            let yyyy = today.getFullYear();
 
+            if(dd < 10) {
+                dd = '0' + dd
+            } 
+
+            if(mm < 10) {
+                mm = '0' + mm
+            } 
+
+            today = mm + '.' + dd + '.' + yyyy;
+            HighScores.add(name, score, today);
+        }
+    }
+
+    self.render = function () {
         if(self.gameOver){
             graphics.drawText({
                 font: "36px Arial",
                 color: "#FF0000",
                 text: 'GAME OVER!',
-                x: graphics.width/2 - 110,
-                y: graphics.height/2
+                x: graphics.width / 2 - 110,
+                y: graphics.height / 2
             });
 
             graphics.drawText({
                 font: "24px Arial",
                 color: "#FFFFFF",
                 text: 'Final score: ' + CollisionSystem.getEnemiesHit().toString(),
-                x: graphics.width/2 - 70,
-                y: graphics.height/2 + 40
+                x: graphics.width / 2 - 70,
+                y: graphics.height / 2 + 40
             });
+
             return;
         }
 
@@ -248,6 +284,10 @@ let AnimationSystem = (function() {
     let animationList = [];
     let explosionImages = [];
     let playerExplosion = [];
+
+    function reset() {
+        animationList.length = 0;
+    }
 
     function addExplosion(fighter, imageSource) {
 
@@ -324,6 +364,7 @@ let AnimationSystem = (function() {
         addExplosion: addExplosion,
         update: update,
         render: render,
+        reset: reset,
     }
 
 }());

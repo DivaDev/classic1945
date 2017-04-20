@@ -28,13 +28,14 @@ let GameEngine = (function() {
     let canvas = document.getElementById('canvas');
     canvas.addEventListener('click', function() {
 
-        if(game.gameOver){
+        if (game.gameOver) {
+            game.reset();
             status = GameStatus.MENU;
             menu.willDisplay();
             return;
         }
 
-        if(status === GameStatus.PAUSE){
+        if (status === GameStatus.PAUSE) {
             status = GameStatus.PLAY;
             return;
         }
@@ -52,10 +53,11 @@ let GameEngine = (function() {
             menu.removeMouseMoveEvent();
             newGameAnimation = AnimateGameLoading(graphics);
             newGameAnimation.create(menu.leftShipImage, menu.rightShipImage);
-            
             game.initialize(Settings.inputDispatch);
         } else if (selection === GameStatus.SETTINGS) {
             Settings.initialize();
+        } else if (selection === GameStatus.HIGH_SCORES) {
+            HighScores.initialize();
         }
 
         status = selection;
@@ -63,12 +65,13 @@ let GameEngine = (function() {
 
     document.addEventListener('keyup', (event) => {
         if (event.keyCode === 27) { // esc
-            if (status === GameStatus.PLAY) {
+            if (status === GameStatus.PLAY && !game.gameOver) {
                 status = GameStatus.PAUSE;
             } else {
                 status = GameStatus.MENU;
                 Settings.willDisappear();
                 menu.willDisplay();
+                game.reset();
             }
         }
     });

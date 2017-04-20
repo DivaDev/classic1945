@@ -31,6 +31,14 @@ let HighScores = (function() {
                 height: height
             });
 
+            Graphics.drawText({
+                font: "16px Arial",
+                color: "#FFFFFF",
+                text: scores[i].user,
+                x: 40,
+                y: 75 + i * 48
+            });
+
             // score
             Graphics.drawUnFilledRectangle({
                 lineWidth: 1,
@@ -41,6 +49,14 @@ let HighScores = (function() {
                 height: height
             });
 
+            Graphics.drawText({
+                font: "16px Arial",
+                color: "#FFFFFF",
+                text: scores[i].score,
+                x: width + 30 + 10,
+                y: 75 + i * 48
+            });
+
             // date
             Graphics.drawUnFilledRectangle({
                 lineWidth: 1,
@@ -49,6 +65,14 @@ let HighScores = (function() {
                 y: 30 + height * i,
                 width: width,
                 height: height
+            });
+
+            Graphics.drawText({
+                font: "16px Arial",
+                color: "#FFFFFF",
+                text: scores[i].date,
+                x: width * 2 + 30 + 10,
+                y: 75 + i * 48
             });
         }
     }
@@ -63,23 +87,30 @@ let HighScores = (function() {
         });
     }
 
-    // function fetchScoresFromServer() {
-    //     $.getJSON('./db/scores.json', function(data) {
-    //         scores = data.all;
-    //         console.log(scores);
-    //     });
-    // }
-
     function fetchScoresFromServer() {
         $.get('v1/scores/all').done(function(data) {
             scores = data;
+
+            // Sort ascending order
+            scores.sort(function(a, b) {
+                return a.score < b.score;
+            });
+
+            // Only show the top 5 scores
+            scores.length = Math.min(5, scores.length);
         });
     }
-    fetchScoresFromServer();
+
+    function initialize() {
+        fetchScoresFromServer();
+        
+    }
 
     return {
         update: update,
-        render: render
+        render: render,
+        add: add,
+        initialize: initialize
     }
 
 }());

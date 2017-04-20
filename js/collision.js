@@ -1,7 +1,6 @@
 let CollisionSystem = (function() {
 
     const playerDamage = 20;
-
     let enemiesHit = 0;
 
     function getEnemiesHit() {
@@ -9,8 +8,6 @@ let CollisionSystem = (function() {
     }
 
     function didPlayerMissilesHitEnemy(enemies, missiles) {
-
-
         if (enemies.length === 0 || missiles.length === 0) {
             return enemiesHit;
         }
@@ -64,7 +61,6 @@ let CollisionSystem = (function() {
                 enemiesHit++;
             }
         }
-
     }
 
     function didEnemyMissilesHitPlayer(enemyMissiles, player) {

@@ -12,6 +12,8 @@ exports.add = function(request, response) {
     const user = params.user;
     const score = Number(params.score);
     const date = params.date;
+
+    console.log('Saving score...');
     
     scores.all.push({
         "user": user,
