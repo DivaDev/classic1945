@@ -36,6 +36,24 @@ function Game(graphics) {
         document.addEventListener('keyup', handleKeyUp);
     };
 
+    let nextLevelUpAt = 1;
+    function getEnemyFireRate() {
+        // Creates a fire rate interval that is dependent on the score.
+        // Ex. if nextLevelUpAt = 3 then it will produce [0.25, 0.50, 0.75].
+        const currentScore = CollisionSystem.getEnemiesHit();
+        if (currentScore > nextLevelUpAt * 10) { // Increase level every 10 points
+            nextLevelUpAt++;
+        }
+
+        const interval = 1 / (nextLevelUpAt + 1);
+        let rate = [];
+        for (let i = 1; i <= nextLevelUpAt; i++) {
+            rate.unshift(interval * i); // place at beginning of array
+        }
+
+        return rate;
+    }
+
     self.reset = function () {
         self.gameOver = false;
         enemies.length = 0;
@@ -174,9 +192,10 @@ function Game(graphics) {
             if (localInterval > 350) {
                 localInterval = 0;
                 countLaunchedEnemies++;
-                enemies.push(new Enemy(possiblePaths[chosenPath]));
+                const fireRate = getEnemyFireRate();
+                enemies.push(new Enemy(possiblePaths[chosenPath], fireRate));
                 if (chosenPath === 7) {
-                    enemies.push(new Enemy(possiblePaths[8]));
+                    enemies.push(new Enemy(possiblePaths[8], fireRate));
                 }
             }
 

@@ -1,4 +1,4 @@
-function Enemy(path) {
+function Enemy(path, fireAtPercentages) {
     let percent = 0;
     let hasFired = false;    
     let self = {};
@@ -11,7 +11,8 @@ function Enemy(path) {
     self.y = self.path.startY;
     self.width = 35; // image width
     self.height = 30; // image height
-    self.willFire = false;    
+    self.willFire = false;
+    let rateOfFire = fireAtPercentages; // Array ex [.75, .5, .25]    
 
     self.fire = function(player) {
         let missile = new EnemyMissile({
@@ -32,14 +33,14 @@ function Enemy(path) {
         return missile;
     };
 
+
     self.update = function(player) {
         move();
 
         let percentComplete = percent / 300;
-
-        if (!hasFired && percentComplete > .5) {
+        if (rateOfFire.length !== 0 && percentComplete > rateOfFire[rateOfFire.length - 1]) {
+            rateOfFire.pop();
             self.willFire = true;
-            hasFired = true;
         }
     };
 
