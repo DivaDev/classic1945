@@ -38,6 +38,7 @@ function Enemy(path, fireAtPercentages) {
         move();
 
         let percentComplete = percent / 300;
+
         if (rateOfFire.length !== 0 && percentComplete > rateOfFire[rateOfFire.length - 1]) {
             rateOfFire.pop();
             self.willFire = true;

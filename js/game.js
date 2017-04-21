@@ -192,10 +192,9 @@ function Game(graphics) {
             if (localInterval > 350) {
                 localInterval = 0;
                 countLaunchedEnemies++;
-                const fireRate = getEnemyFireRate();
-                enemies.push(new Enemy(possiblePaths[chosenPath], fireRate));
+                enemies.push(new Enemy(possiblePaths[chosenPath], getEnemyFireRate()));
                 if (chosenPath === 7) {
-                    enemies.push(new Enemy(possiblePaths[8], fireRate));
+                    enemies.push(new Enemy(possiblePaths[8], getEnemyFireRate()));
                 }
             }
 
