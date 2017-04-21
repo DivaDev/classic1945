@@ -24,6 +24,21 @@ let Graphics = (function() {
         context.drawImage(spec.image, spec.x, spec.y);
     }
 
+    function drawRotatingImage(spec) {
+        context.save();
+
+		context.translate(spec.x, spec.y);
+		context.rotate(spec.rotation);
+		context.translate(-spec.x, -spec.y);
+
+		context.drawImage(
+			spec.image,
+			spec.x - spec.size / 2,
+			spec.y - spec.size / 2);
+
+		context.restore();
+    }
+
     function drawSquare(spec) {
         context.save();
         context.beginPath();
@@ -132,7 +147,11 @@ let Graphics = (function() {
         context.beginPath();
         context.arc(spec.center.x, spec.center.y, spec.size, 0, 2 * Math.PI);
         context.fillStyle = spec.fillStyle;
-        context.strokeStyle = 'white';
+        if (spec.hasOwnProperty('strokeStyle')) {
+            context.strokeStyle = spec.strokeStyle;
+        } else {
+            context.strokeStyle = 'white';
+        }
         context.fill();
         context.stroke();
     }
@@ -153,5 +172,6 @@ let Graphics = (function() {
         drawUnFilledRectangle: drawUnFilledRectangle,
         drawCircle: drawCircle,
         drawParticleCircle: drawParticleCircle,
+        drawRotatingImage: drawRotatingImage
     }
 }());

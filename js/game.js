@@ -144,6 +144,8 @@ function Game(graphics) {
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
         CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
         updateEnemies();
+        AnimationSystem.update(elapsedTime);
+        ImageParticleSystem.update(elapsedTime);
 
         if(self.player.lives <= 0){ // check for a game over
             ceaseFire = true;
@@ -167,8 +169,6 @@ function Game(graphics) {
             localInterval += elapsedTime;
         }
 
-        AnimationSystem.update(elapsedTime);
-
         if (sendEnemies) {
 
             if (localInterval > 350) {
@@ -185,8 +185,6 @@ function Game(graphics) {
                 countLaunchedEnemies = 0;
             }
         }
-
-
     };
 
     function saveScore(score) {
@@ -235,7 +233,7 @@ function Game(graphics) {
         graphics.drawRectangle(self.player.health.fill);
         graphics.drawText(self.player.health.text);
 
-        self.player.superWeapon.render();
+        self.player.render();
 
         graphics.drawText({
             font: "8px Arial",
@@ -246,6 +244,8 @@ function Game(graphics) {
         });
 
         AnimationSystem.render();
+        ImageParticleSystem.render();
+        
         if(self.player.lives > 0) {
             graphics.drawImage(self.player);
         }

@@ -24,6 +24,35 @@ let CollisionSystem = (function() {
             for (let j = 0; j < tempMissiles.length; j++) {
                 if (willCollide(enemies[i], missiles[j])) {
                     AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
+                    const wings = {
+                        x: enemies[i].x + enemies[i].width / 2,
+                        y: enemies[i].y + enemies[i].height / 2,
+                        imageUrl: "/images/cropped/rsz_tie_fighter_wing_cropped.png",
+                        speed: { mean: 70, stdev: 10 },
+                        lifetime: { mean: 0.1, stdev: 0.05 }
+                    }
+
+                    const body = {
+                        x: enemies[i].x + enemies[i].width / 2,
+                        y: enemies[i].y + enemies[i].height / 2,
+                        imageUrl: "/images/cropped/tie_fighter_crop1.png",
+                        speed: { mean: 70, stdev: 10 },
+                        lifetime: { mean: 0.1, stdev: 0.05 }
+                    }
+
+                    const body2 = {
+                        x: enemies[i].x + enemies[i].width / 2,
+                        y: enemies[i].y + enemies[i].height / 2,
+                        imageUrl: "/images/cropped/tie_fighter_crop2.png",
+                        speed: { mean: 70, stdev: 10 },
+                        lifetime: { mean: 0.1, stdev: 0.05 }
+                    }
+
+                    ImageParticleSystem.create(wings.x, wings.y ,wings.imageUrl, wings.speed, wings.lifetime);
+                    ImageParticleSystem.create(wings.x, wings.y ,wings.imageUrl, wings.speed, wings.lifetime);
+                    ImageParticleSystem.create(body.x, body.y ,body.imageUrl, body.speed, body.lifetime);
+                    ImageParticleSystem.create(body.x, body.y ,body.imageUrl, body.speed, body2.lifetime);
+
                     enemies.splice(i, 1);
                     missiles.splice(j, 1);
                     enemiesHit++;

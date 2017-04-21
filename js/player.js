@@ -12,6 +12,8 @@ function Player(startX, startY) {
     self.x = self.center.x;
     self.y = self.center.y;
 
+    let playerEngine = new PlayerEngineEmitter(self);
+
     self.image.src = "Images/rsz_xwing.png";
     self.willMoveUp = false;
     self.willMoveLeft = false;
@@ -105,6 +107,7 @@ function Player(startX, startY) {
 
     self.update = function(elapsedTime) {
         self.move();
+        playerEngine.updateSparks();
 
         let missiles = self.missiles;
         for (let i = 0; i < missiles.length; i++) {
@@ -145,6 +148,11 @@ function Player(startX, startY) {
             // self.superWeapon = null;
         }
     };
+
+    self.render = function() {
+        playerEngine.renderSparks();
+        self.superWeapon.render();
+    }
 
     const superWeaponStages = {
         'NONE': 0,

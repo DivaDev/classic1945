@@ -91,9 +91,9 @@ let HighScores = (function() {
         $.get('v1/scores/all').done(function(data) {
             scores = data;
 
-            // Sort ascending order
+            // Sort descending order
             scores.sort(function(a, b) {
-                return a.score < b.score;
+                return b.score - a.score;
             });
 
             // Only show the top 5 scores
