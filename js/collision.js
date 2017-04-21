@@ -51,7 +51,7 @@ let CollisionSystem = (function() {
                     ImageParticleSystem.create(wings.x, wings.y ,wings.imageUrl, wings.speed, wings.lifetime);
                     ImageParticleSystem.create(wings.x, wings.y ,wings.imageUrl, wings.speed, wings.lifetime);
                     ImageParticleSystem.create(body.x, body.y ,body.imageUrl, body.speed, body.lifetime);
-                    ImageParticleSystem.create(body.x, body.y ,body.imageUrl, body.speed, body2.lifetime);
+                    ImageParticleSystem.create(body2.x, body2.y ,body2.imageUrl, body2.speed, body2.lifetime);
 
                     enemies.splice(i, 1);
                     missiles.splice(j, 1);
