@@ -16,8 +16,10 @@ function Game(graphics) {
     let countLaunchedEnemies = 0;
     let timerInterval = 0;
     let localInterval = 0;
+    let gameOverInterval = 0;
     let possiblePaths = FollowPathSystem.possiblePaths;
     let enemyMissiles = [];
+    let ceaseFire = false;
     let willAddHighScore = true;
 
     self.player = null;
@@ -39,11 +41,15 @@ function Game(graphics) {
         enemies.length = 0;
         enemyMissiles.length = 0;
         self.player = null;
+        willChargeSuperBeam = false;
         willAddHighScore = true;
         timerInterval = 0;
         localInterval = 0;
+        ceaseFire = false;
+        gameOverInterval = 0;
         countLaunchedEnemies = 0;
         AnimationSystem.reset();
+        CollisionSystem.resetEnemiesHit();
     };
 
     function handleKeyDown(event) {
@@ -80,7 +86,7 @@ function Game(graphics) {
             self.player.willMoveUp = false;
         }
 
-        if (event.keyCode === 32) { // space
+        if (event.keyCode === 32 && !ceaseFire) { // space
             self.player.fire();
             self.player.fireSuperWeapon();
             willChargeSuperBeam = false;
@@ -91,7 +97,7 @@ function Game(graphics) {
     function updateEnemies() {
         enemies.forEach(function (enemy) {
             enemy.update(self.player);
-            if (enemy.willFire) {
+            if (enemy.willFire && !ceaseFire) {
                 enemyMissiles.push(enemy.fire(self.player));
             }
         });
@@ -139,7 +145,19 @@ function Game(graphics) {
         CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
         updateEnemies();
 
-        if (timerInterval > 2500) {
+        if(self.player.lives <= 0){ // check for a game over
+            ceaseFire = true;
+
+            if(gameOverInterval > 4000){
+                gameOverInterval = 0;
+                self.gameOver = true;
+                saveScore(CollisionSystem.getEnemiesHit());
+                willAddHighScore = false;
+            }
+            gameOverInterval+= elapsedTime;
+        }
+
+        if (timerInterval > 2500 && !ceaseFire) {
             timerInterval = 0;
             sendEnemies = true;
             chosenPath = Math.floor((Math.random() * possiblePaths.length));
@@ -168,11 +186,7 @@ function Game(graphics) {
             }
         }
 
-        if(self.player.lives <= 0){ // check for a game over
-            self.gameOver = true;
-            saveScore(CollisionSystem.getEnemiesHit());
-            willAddHighScore = false;
-        }
+
     };
 
     function saveScore(score) {
@@ -232,7 +246,9 @@ function Game(graphics) {
         });
 
         AnimationSystem.render();
-        graphics.drawImage(self.player);
+        if(self.player.lives > 0) {
+            graphics.drawImage(self.player);
+        }
         self.player.missiles.forEach(function (missile) {
             graphics.drawSquare(missile);
         });
@@ -364,7 +380,7 @@ let AnimationSystem = (function() {
         addExplosion: addExplosion,
         update: update,
         render: render,
-        reset: reset,
+        reset: reset
     }
 
 }());

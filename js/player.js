@@ -17,6 +17,7 @@ function Player(startX, startY) {
     self.willMoveLeft = false;
     self.willMoveDown = false;
     self.willMoveRight = false;
+    self.ceaseFire = false;
     self.missiles = [];
     self.health = {
         hitPoints: hitPoints,

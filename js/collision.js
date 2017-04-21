@@ -7,6 +7,10 @@ let CollisionSystem = (function() {
         return enemiesHit;
     }
 
+    function resetEnemiesHit(){
+        enemiesHit = 0;
+    }
+
     function didPlayerMissilesHitEnemy(enemies, missiles) {
         if (enemies.length === 0 || missiles.length === 0) {
             return enemiesHit;
@@ -100,6 +104,7 @@ let CollisionSystem = (function() {
         didEnemyMissilesHitPlayer : didEnemyMissilesHitPlayer,
         checkPlayerSuperWeaponWithEnemies: checkPlayerSuperWeaponWithEnemies,
         getEnemiesHit: getEnemiesHit,
+        resetEnemiesHit: resetEnemiesHit
     };
 
 }());
