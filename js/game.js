@@ -251,7 +251,10 @@ function Game(graphics) {
         graphics.drawRectangle(self.player.health.fill);
         graphics.drawText(self.player.health.text);
 
-        self.player.render();
+        if(!ceaseFire){
+            self.player.render();
+        }
+
 
         graphics.drawText({
             font: "8px Arial",

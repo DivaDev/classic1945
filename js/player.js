@@ -144,8 +144,11 @@ function Player(startX, startY) {
         //check health status
         if(self.health.hitPoints <= 0 && self.lives > 0){
             self.lives--;
-            self.health.hitPoints = 100;
-            // self.superWeapon = null;
+            if(self.lives <= 0) {
+                self.health.hitPoints = 0;
+            }else{
+                self.health.hitPoints = 100;
+            }
         }
     };
 
