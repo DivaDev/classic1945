@@ -148,7 +148,7 @@ function Game(graphics) {
             if (enemies.length === 0) {
                 // load vader
                 if (!CollisionSystem.isBossDefeated()) {
-                    enemies.push(new Vader(possiblePaths[possiblePaths.length - 1], [0.5]));                
+                    enemies.push(new Vader(possiblePaths[possiblePaths.length - 1], [0.66, 0.33]));
                 }
             } else {
                 if (enemies[0].requestAssistance === true) {

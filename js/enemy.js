@@ -171,8 +171,8 @@ function Vader(path, fireAtPercentages) {
     }
 
     function move() {
-        percent += 3;
 
+        percent += 3;
         let percentComplete = percent / 300;
         let coord = FollowPathSystem.update(self.path, percentComplete);
 
@@ -199,16 +199,8 @@ function Vader(path, fireAtPercentages) {
 
     self.render = function() {
         Graphics.drawImage(self);
-
-        // context.beginPath();
-        // context.lineWidth = spec.lineWidth;
-        // context.strokeStyle = spec.strokeStyle;
-        // context.rect(spec.x, spec.y, spec.width, spec.height);
-        // context.stroke();
         Graphics.drawUnFilledRectangle(self.health.outline);
         Graphics.drawRectangle(self.health.fill);
-        // Graphics.drawRectangle(self.health.fill);
-        
     }
 
     SoundSystem.play('audio/Imperial_song_John_Williams');
