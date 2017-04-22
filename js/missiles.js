@@ -7,8 +7,7 @@ function Missile(specs) {
     self.color = specs.color;
     self.speed = 4;
 
-    self.update = function () {
-    };
+    self.update = function () {};
 
     return self;
 }
@@ -37,7 +36,12 @@ function EnemyMissile(specs, path) {
 
     self.update = function () {
         // self.y -= self.speed;
-        percent += 1;
+
+        if (self.hasOwnProperty('deflect')) {
+            percent += 5;
+        } else {
+            percent += 1;
+        }
 
         let percentageComplete = percent / 100;
         let coord = FollowPathSystem.update(self.path, percentageComplete);

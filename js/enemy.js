@@ -12,9 +12,10 @@ function Enemy(path, fireAtPercentages) {
     self.width = 35; // image width
     self.height = 30; // image height
     self.willFire = false;
-    let rateOfFire = fireAtPercentages; // Array ex [.75, .5, .25]    
+    let rateOfFire = fireAtPercentages; // Array ex [.75, .5, .25]
 
-    self.fire = function(player) {
+    self.fire = function(target) {
+        // Target must have a x, y, width, and height
         let missile = new EnemyMissile({
             x: self.x + 2,
             y: self.y,
@@ -25,9 +26,14 @@ function Enemy(path, fireAtPercentages) {
             type: PathTypes.LINE,
             startX: self.x,
             startY: self.y,
-            endX: player.x + player.width / 2,
-            endY: player.y + player.height / 2
+            endX: target.x + target.width / 2,
+            endY: target.y + target.height / 2
         });
+
+        if (target.hasOwnProperty('deflect')) {
+            // missile that boss is going to deflect
+            missile.deflect = true;
+        }
         
         self.willFire = false;
         return missile;
@@ -170,7 +176,7 @@ function Vader(path, fireAtPercentages) {
                 isAppearing = false;
             }
         } else {
-
+            handleDeflecting(player);
             move();
             // have player follow paths
             let percentComplete = percent / 300;
@@ -183,6 +189,48 @@ function Vader(path, fireAtPercentages) {
         self.health.update();
     }
 
+    self.missilesThatAreClose = [];
+
+    function handleDeflecting(player) {
+
+        if (player.missiles.length === 0) { // no missiles
+            return;
+        }
+
+        // let missilesThatAreClose = [];
+        self.missilesThatAreClose.length = 0;
+        // check if any missiles are in range
+        // calculate if a missile is in path to hit vader
+        for (let i = 0; i < player.missiles.length; i++) {
+            if (
+                Math.abs(player.missiles[i].y - self.y) < 50 && // vertical distance
+                player.missiles[i].x > paths[0].startX && // left side of figure 8 path
+                player.missiles[i].x < paths[1].endX && // right side of figure 8 path
+                !player.missiles[i].hasOwnProperty('tag') // tag if not tagged to avoid firing at same missile twice
+            ) {
+                self.missilesThatAreClose.push(player.missiles[i]);
+                player.missiles[i].tag = true;
+            }
+        }
+
+        if (self.missilesThatAreClose.length === 0) {
+            return; // no missiles are close
+        }
+
+        // Dodge only when on path
+        // Instead of dodging, we'll do a deflect because its easier
+        // file at income missile
+        for (let i = 0; i < self.missilesThatAreClose.length; i++) {
+            randomNumber = Math.random();
+            if (randomNumber > 0.5) {// 50% chance of deflecting
+                self.missilesThatAreClose[i].deflect = true;
+            }
+        }
+        self.willFire = true;
+        // When not on path than i'm moving.
+        // If moving then animate move away then back onto path
+    }
+
     function move() {
 
         percent += 3;
@@ -191,6 +239,7 @@ function Vader(path, fireAtPercentages) {
 
         self.x = coord.x - self.width / 2;
         self.y = coord.y - self.height / 2;
+
 
         if (percent >= 300) {
             
@@ -219,7 +268,5 @@ function Vader(path, fireAtPercentages) {
     SoundSystem.play('audio/Imperial_song_John_Williams');
     
     // Vader fires multiple times and may have more than one weapon
-    
-
     return self;
 }

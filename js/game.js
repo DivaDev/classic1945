@@ -121,25 +121,40 @@ function Game(graphics) {
         enemies.forEach(function (enemy) {
             enemy.update(self.player, elapsedTime);
             if (enemy.willFire && !ceaseFire) {
-                enemyMissiles.push(enemy.fire(self.player));
+
+                if (enemy.hasOwnProperty('boss') && enemy.missilesThatAreClose.length !== 0) {
+
+                    if (enemy.missilesThatAreClose[0].hasOwnProperty('deflect')) {
+                        // deflect player missile
+                        enemyMissiles.push(enemy.fire(enemy.missilesThatAreClose[0]));
+                        // delete enemy.missilesThatAreClose.deflect;   
+                    }
+                } else {
+                    enemyMissiles.push(enemy.fire(self.player));
+                }
             }
         });
 
         enemies = enemies.filter((enemy) => {
-            return !enemy.finished;  // Keep the non finished
+            return !enemy.finished;  // Keep the not finished
         });
 
         let missiles = enemyMissiles;
         for (let i = 0; i < missiles.length; i++) {
             missiles[i].update();
 
-            if (missiles[i].y < 0) {
+            if (
+                missiles[i].y < 0 ||
+                missiles[i].y > Graphics.height ||
+                missiles[i].x < 0 || 
+                missiles[i].x > Graphics.width   
+            ) {
                 // Remove missile when off the screen
                 enemyMissiles.splice(i, 1);
             }
         }
 
-        if (nextLevelUpAt === 1) {
+        if (nextLevelUpAt === 2) {
             onBossLevel = true;
         }
 
@@ -221,6 +236,7 @@ function Game(graphics) {
         CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
         CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
+        CollisionSystem.didDeflectPlayMissile(enemyMissiles, self.player.missiles);
         updateEnemies(elapsedTime);
         AnimationSystem.update(elapsedTime);
         ImageParticleSystem.update(elapsedTime);

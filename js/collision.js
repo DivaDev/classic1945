@@ -131,6 +131,22 @@ let CollisionSystem = (function() {
         }
     }
 
+    function didDeflectPlayMissile(enemyMissiles, playerMissiles) {
+        if (enemyMissiles.length === 0 || playerMissiles.length === 0) {
+            return;
+        }
+
+        for (let i = 0; i < enemyMissiles.length; i++) {
+            for (let j = 0; j < playerMissiles.length; j++) {
+                if (willCollide(enemyMissiles[i], playerMissiles[j])) {
+                    enemyMissiles.splice(i, 1);
+                    playerMissiles.splice(j, 1);
+                    break;
+                }
+            }
+        }
+    }
+
     function didEnemyMissilesHitPlayer(enemyMissiles, player) {
 
         if (enemyMissiles.length === 0) {
@@ -143,6 +159,7 @@ let CollisionSystem = (function() {
             if (willCollide(enemyMissiles[j], player)) {
                 //AnimationSystem.tieFighterExplosion(enemies[i]);
                 //This needs to be turned into the player getting damaged
+
                 player.health.hitPoints -= playerDamage;
                 player.health.update();
 
@@ -169,7 +186,8 @@ let CollisionSystem = (function() {
         checkPlayerSuperWeaponWithEnemies: checkPlayerSuperWeaponWithEnemies,
         getEnemiesHit: getEnemiesHit,
         reset: reset,
-        isBossDefeated: isBossDefeated
+        isBossDefeated: isBossDefeated,
+        didDeflectPlayMissile: didDeflectPlayMissile
     };
 
 }());
