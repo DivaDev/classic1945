@@ -64,27 +64,39 @@ function Enemy(path, fireAtPercentages) {
 
 
 function Vader(path, fireAtPercentages) {
+
+    // Figure 8 path
+    const paths = path.paths;
+    const descendSpeed = 3
+    const hitPoints = 1000;
+    
+    let rateOfFire = fireAtPercentages.slice();
+    let isAppearing = true;
+    let currentPathIndex = 1; // Start on the top right hump of the path
+    let appearanceTimer = 1500;
+    let assistanceRequestInterval = [0.25, 0.50, 0.75];
+    let percent = 0;
+    
+    // controls when it is allowed to get hit by the ott weapon.
+    let ottInterval = 0; 
+
     let self = Enemy(path, fireAtPercentages);
     self.boss = true; // attribute to identify aa boss from enemy
-    self.image.src = "Images/rsz_vader_tie_fighter2.png";
     self.width = 35;
     self.height = 37;
+    self.image.src = "Images/rsz_vader_tie_fighter2.png";
+    self.image.width = 47;
+    self.image.height = 37;
+    
     self.x = Graphics.width / 2 - self.width / 2 + 2;
     self.y = 0;
     self.willFire = false;
-    let rateOfFire = fireAtPercentages.slice();
-    let isAppearing = true;
-    const paths = path.paths;
-    const descendSpeed = 3
-    let currentPathIndex = 1; // Start on the top right hump of the path
-    let appearanceTimer = 1500;
-    let percent = 0;
+
 
     self.path = paths[currentPathIndex];
     self.requestAssistance = false;
     
     self.canGetHitByOTT = true;
-    let ottInterval = 0;
 
     function updateIfCanGetHitByOTT(elapsedTime) {
 
@@ -93,13 +105,15 @@ function Vader(path, fireAtPercentages) {
         }
 
         if (ottInterval > 1500) {
+            // Allows the over the top(ott) weapon to only hit once instead of multiple times
+            // when the ott weapon is expanding
             self.canGetHitByOTT = true;
             ottInterval = 0;
         }
         ottInterval += elapsedTime;
     }
 
-    const hitPoints = 1000;
+    // Vader has health
     self.health = {
         hitPoints: hitPoints,
         outline: {
@@ -133,10 +147,9 @@ function Vader(path, fireAtPercentages) {
         }
     };
 
-    let assistanceRequestInterval = [0.25, 0.50, 0.75];
 
     function handleRequestingBackup() {
-
+        // Allow vader to send some enemy tie fighters
         // send back up at 25, 50, and 75 percent of health
         const health = self.health.hitPoints / hitPoints;
         if (health < assistanceRequestInterval[assistanceRequestInterval.length - 1]) {
@@ -205,10 +218,8 @@ function Vader(path, fireAtPercentages) {
 
     SoundSystem.play('audio/Imperial_song_John_Williams');
     
-    // Give vader the figure 8 path
     // Vader fires multiple times and may have more than one weapon
-    // Vader also has health
-    // Maybe allow vader to send some enemy tie fighters
+    
 
     return self;
 }

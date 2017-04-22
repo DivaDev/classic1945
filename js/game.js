@@ -139,7 +139,7 @@ function Game(graphics) {
             }
         }
 
-        if (nextLevelUpAt === 2) {
+        if (nextLevelUpAt === 1) {
             onBossLevel = true;
         }
 
@@ -226,7 +226,7 @@ function Game(graphics) {
         ImageParticleSystem.update(elapsedTime);
 
         if(self.player.lives <= 0){ // check for a game over
-            handleClosingTheGame();
+            handleClosingTheGame(elapsedTime);
         }
 
         if (timerInterval > 2500 && !ceaseFire) {
@@ -340,9 +340,9 @@ function Game(graphics) {
         // graphics.drawQuadraticCurve(possiblePaths[6]);
         // graphics.drawQuadraticCurve(possiblePaths[7]);
         // graphics.drawQuadraticCurve(possiblePaths[8]);
-        possiblePaths[9].paths.forEach((path) => {
-            graphics.drawQuadraticCurve(path);
-        })
+        // possiblePaths[9].paths.forEach((path) => {
+        //     graphics.drawQuadraticCurve(path);
+        // })
     };
 
     function keepPlayerWithInBounds() {
