@@ -2,7 +2,7 @@ let CollisionSystem = (function() {
 
     const playerDamage = 20;
     let enemiesHit = 0;
-    const bossDamage = 200;
+    const bossDamage = 30;
     let bossHasBeenDefeated = false;
 
     function isBossDefeated() {

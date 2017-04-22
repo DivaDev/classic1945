@@ -43,7 +43,7 @@ function Game(graphics) {
         // Creates a fire rate interval that is dependent on the score.
         // Ex. if nextLevelUpAt = 3 then it will produce [0.25, 0.50, 0.75].
         const currentScore = CollisionSystem.getEnemiesHit();
-        if (currentScore > nextLevelUpAt * 2) { // Increase level every 10 points
+        if (currentScore > nextLevelUpAt * 10) { // Increase level every 10 points
             nextLevelUpAt++;
         }
 
@@ -134,7 +134,7 @@ function Game(graphics) {
             }
         }
 
-        if (nextLevelUpAt === 1) {
+        if (nextLevelUpAt === 3) {
             onBossLevel = true;
         }
 
