@@ -3,7 +3,7 @@ function Player(startX, startY) {
     const weaponDuration = 2000;
     let self = {};
     let movementSpeed = 4;
-    let willFireOnRight = true;    
+    let willFireOnRight = true;
 
     self.image = new Image();
     self.width = 35;

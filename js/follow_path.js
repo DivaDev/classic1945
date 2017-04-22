@@ -96,6 +96,47 @@ let FollowPathSystem = (function() {
             endY: 0
         };
 
+        // For the figure 8
+        const yPos = 50;
+        const bottomFocusPointY = 175
+        const topFocusPointY = 25;
+        const levelPointY = 100;
+        const figure8 = {
+            paths: [{
+                type: PathTypes.QUAD,
+                startX: 150,
+                startY: 50 + yPos,
+                cpx: 200,
+                cpy: bottomFocusPointY,
+                endX: 250,
+                endY: levelPointY
+            }, {
+                type: PathTypes.QUAD,
+                startX: 250,
+                startY: 50 + yPos,
+                cpx: 300,
+                cpy: topFocusPointY,
+                endX: 350,
+                endY: levelPointY
+            }, {
+                type: PathTypes.QUAD,
+                startX: 350,
+                startY: 50 + yPos,
+                cpx: 300,
+                cpy: bottomFocusPointY,
+                endX: 250,
+                endY: levelPointY
+            }, {
+                type: PathTypes.QUAD,
+                startX: 250,
+                startY: 50 + yPos,
+                cpx: 200,
+                cpy: topFocusPointY,
+                endX: 150,
+                endY: levelPointY
+            }]
+        }
+
         possiblePaths.push(aroundTheMapBezier);
         possiblePaths.push(aroundTheMapQuad);
         possiblePaths.push(leftCurveOut);
@@ -105,6 +146,7 @@ let FollowPathSystem = (function() {
         possiblePaths.push(leftToBottomMiddleOffset);
         possiblePaths.push(leftU);
         possiblePaths.push(RightU);
+        possiblePaths.push(figure8); // lets keep figure8 as the last path
     }
 
     function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {

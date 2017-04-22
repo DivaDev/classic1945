@@ -38,7 +38,6 @@ const ImageParticleSystem = (function(graphics) {
                 
 				// Update how long it has been alive
 				particle.alive += elapsedTime;
-				// debugger;
 				// Update its position
 				particle.x += (elapsedTime * particle.speed * particle.direction.x);
 				particle.y += (elapsedTime * particle.speed * particle.direction.y);
@@ -63,7 +62,6 @@ const ImageParticleSystem = (function(graphics) {
     function render() {
         let particle;
         for(let value in particles) {
-            // debugger;
             if (particles.hasOwnProperty(value)) {
                 particle = particles[value];
                 graphics.drawRotatingImage(particle);
