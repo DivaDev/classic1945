@@ -134,7 +134,7 @@ function Game(graphics) {
             }
         }
 
-        if (nextLevelUpAt === 3) {
+        if (nextLevelUpAt === 2) {
             onBossLevel = true;
         }
 
@@ -142,7 +142,9 @@ function Game(graphics) {
             // wait till all enemies have gone off the screen
             if (enemies.length === 0) {
                 // load vader
-                enemies.push(new Vader(possiblePaths[possiblePaths.length - 1], [0.5]));
+                if (!CollisionSystem.isBossDefeated()) {
+                    enemies.push(new Vader(possiblePaths[possiblePaths.length - 1], [0.5]));                
+                }
             } else {
                 if (enemies[0].requestAssistance === true) {
                     handleDeployingEnemies();

@@ -79,10 +79,25 @@ function Vader(path, fireAtPercentages) {
     let currentPathIndex = 1; // Start on the top right hump of the path
     let appearanceTimer = 1500;
     let percent = 0;
-    
 
     self.path = paths[currentPathIndex];
     self.requestAssistance = false;
+    
+    self.canGetHitByOTT = true;
+    let ottInterval = 0;
+
+    function updateIfCanGetHitByOTT(elapsedTime) {
+
+        if (self.canGetHitByOTT) {
+            return;
+        }
+
+        if (ottInterval > 1500) {
+            self.canGetHitByOTT = true;
+            ottInterval = 0;
+        }
+        ottInterval += elapsedTime;
+    }
 
     const hitPoints = 1000;
     self.health = {
@@ -131,6 +146,8 @@ function Vader(path, fireAtPercentages) {
     }
 
     self.update = function(player, elapsedTime) {
+
+        updateIfCanGetHitByOTT(elapsedTime);
         
         // animate down
         if (isAppearing) {

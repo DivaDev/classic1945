@@ -3,6 +3,7 @@ let CollisionSystem = (function() {
     const playerDamage = 20;
     let enemiesHit = 0;
     const bossDamage = 30;
+    const pointsForDefeatingBoss = 100;    
     let bossHasBeenDefeated = false;
 
     function isBossDefeated() {
@@ -69,6 +70,7 @@ let CollisionSystem = (function() {
                             AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
                             enemies.splice(i, 1);
                             bossHasBeenDefeated = true;
+                            enemiesHit += pointsForDefeatingBoss;
                         }
                     } else {
                         hitTieFighter(enemies[i]);
@@ -108,9 +110,23 @@ let CollisionSystem = (function() {
         let tempEnemies = enemies;
         for (let i = 0; i < tempEnemies.length; i++) {
             if (RectCircleColliding(player.superWeapon, tempEnemies[i]) && player.superWeapon.isFiring) {
-                AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
-                enemies.splice(i, 1);
-                enemiesHit++;
+                if (enemies[i].hasOwnProperty('boss')) {
+                    if (enemies[i].canGetHitByOTT) {
+                        enemies[i].health.hitPoints -= bossDamage * 10;
+                        enemies[i].canGetHitByOTT = false;
+                    }   
+
+                    if (enemies[i].health.hitPoints <= 0) {
+                        AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
+                        enemies.splice(i, 1);
+                        bossHasBeenDefeated = true;
+                        enemiesHit += pointsForDefeatingBoss;
+                    }
+                } else {
+                    AnimationSystem.addExplosion(enemies[i], "images/explosion/explosion0000.png");
+                    enemies.splice(i, 1);
+                    enemiesHit++;
+                }
             }
         }
     }
