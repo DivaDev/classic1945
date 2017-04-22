@@ -241,7 +241,6 @@ function PlayerSuperWeapon(specs, weaponDuration) {
 
     self.update = function(elapsedTime, player, weaponState) {
         state = weaponState;
-        self.isFiring = false;
 
         if (state === 0) {
             // do nothing
@@ -251,7 +250,7 @@ function PlayerSuperWeapon(specs, weaponDuration) {
         self.x = player.x + player.width / 2;
         self.y = player.y + 10;
 
-        if (state === 1) {
+        if (state === 1 && !self.isFiring) {
             // charge
             charge(elapsedTime, player);
             particles.update(elapsedTime);

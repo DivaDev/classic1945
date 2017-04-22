@@ -21,7 +21,8 @@ function Game(graphics) {
     let enemyMissiles = [];
     let ceaseFire = false;
     let willAddHighScore = true;
-    let willChargeSuperBeam = false;    
+    let willChargeSuperBeam = false;
+    let nextLevelUpAt = 1;
 
     self.player = null;
     self.inputDispatch = null;
@@ -30,15 +31,15 @@ function Game(graphics) {
 
     self.initialize = function (controls) {
         console.log('start game');
+        self.reset();
+        
         self.player = new Player(graphics.width / 2, graphics.height - 20);
         self.inputDispatch = controls;
-        willAddHighScore = true;
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
     };
 
-    let nextLevelUpAt = 1;
     function getEnemyFireRate() {
         // Creates a fire rate interval that is dependent on the score.
         // Ex. if nextLevelUpAt = 3 then it will produce [0.25, 0.50, 0.75].
@@ -57,6 +58,8 @@ function Game(graphics) {
     }
 
     self.reset = function () {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
         self.gameOver = false;
         enemies.length = 0;
         enemyMissiles.length = 0;
@@ -67,6 +70,8 @@ function Game(graphics) {
         localInterval = 0;
         ceaseFire = false;
         gameOverInterval = 0;
+        onBossLevel = false;
+        nextLevelUpAt = 1;
         countLaunchedEnemies = 0;
         AnimationSystem.reset();
         CollisionSystem.reset();
