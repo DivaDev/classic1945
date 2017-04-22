@@ -21,22 +21,25 @@ function Game(graphics) {
     let enemyMissiles = [];
     let ceaseFire = false;
     let willAddHighScore = true;
+    let willChargeSuperBeam = false;
+    let nextLevelUpAt = 1;
 
     self.player = null;
     self.inputDispatch = null;
     self.gameOver = false;
+    let onBossLevel = false;
 
     self.initialize = function (controls) {
         console.log('start game');
+        self.reset();
+        
         self.player = new Player(graphics.width / 2, graphics.height - 20);
         self.inputDispatch = controls;
-        willAddHighScore = true;
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
     };
 
-    let nextLevelUpAt = 1;
     function getEnemyFireRate() {
         // Creates a fire rate interval that is dependent on the score.
         // Ex. if nextLevelUpAt = 3 then it will produce [0.25, 0.50, 0.75].
@@ -55,6 +58,8 @@ function Game(graphics) {
     }
 
     self.reset = function () {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
         self.gameOver = false;
         enemies.length = 0;
         enemyMissiles.length = 0;
@@ -65,9 +70,11 @@ function Game(graphics) {
         localInterval = 0;
         ceaseFire = false;
         gameOverInterval = 0;
+        onBossLevel = false;
+        nextLevelUpAt = 1;
         countLaunchedEnemies = 0;
         AnimationSystem.reset();
-        CollisionSystem.resetEnemiesHit();
+        CollisionSystem.reset();
     };
 
     function handleKeyDown(event) {
@@ -88,8 +95,6 @@ function Game(graphics) {
             fireButtonPressed = true;
         }
     }
-
-    let willChargeSuperBeam = false;
 
     function handleKeyUp(event) {
         if (event.keyCode === self.inputDispatch['RIGHT'].keycode) {
@@ -112,26 +117,79 @@ function Game(graphics) {
         }
     }
 
-    function updateEnemies() {
+    function updateEnemies(elapsedTime) {
         enemies.forEach(function (enemy) {
-            enemy.update(self.player);
+            enemy.update(self.player, elapsedTime);
             if (enemy.willFire && !ceaseFire) {
-                enemyMissiles.push(enemy.fire(self.player));
+
+                if (enemy.hasOwnProperty('boss') && enemy.missilesThatAreClose.length !== 0) {
+
+                    if (enemy.missilesThatAreClose[0].hasOwnProperty('deflect')) {
+                        // deflect player missile
+                        enemyMissiles.push(enemy.fire(enemy.missilesThatAreClose[0]));
+                        // delete enemy.missilesThatAreClose.deflect;   
+                    }
+                } else {
+                    enemyMissiles.push(enemy.fire(self.player));
+                }
             }
         });
 
         enemies = enemies.filter((enemy) => {
-            return !enemy.finished;  // Keep the non finished
+            return !enemy.finished;  // Keep the not finished
         });
 
         let missiles = enemyMissiles;
         for (let i = 0; i < missiles.length; i++) {
             missiles[i].update();
 
-            if (missiles[i].y < 0) {
+            if (
+                missiles[i].y < 0 ||
+                missiles[i].y > Graphics.height ||
+                missiles[i].x < 0 || 
+                missiles[i].x > Graphics.width   
+            ) {
                 // Remove missile when off the screen
                 enemyMissiles.splice(i, 1);
             }
+        }
+
+        if (nextLevelUpAt === 2) {
+            onBossLevel = true;
+        }
+
+        if (onBossLevel) {
+            // wait till all enemies have gone off the screen
+            if (enemies.length === 0) {
+                // load vader
+                if (!CollisionSystem.isBossDefeated()) {
+                    enemies.push(new Vader(possiblePaths[possiblePaths.length - 1], [0.66, 0.33]));
+                }
+            } else {
+                if (enemies[0].requestAssistance === true) {
+                    handleDeployingEnemies();
+                    enemies[0].requestAssistance = false;
+                }
+            }
+
+        } else if (sendEnemies) {
+            handleDeployingEnemies();            
+        }
+    }
+
+    function handleDeployingEnemies() {
+        if (localInterval > 350) {
+            localInterval = 0;
+            countLaunchedEnemies++;
+            enemies.push(new Enemy(possiblePaths[chosenPath], getEnemyFireRate()));
+            if (chosenPath === 7) {
+                enemies.push(new Enemy(possiblePaths[8], getEnemyFireRate()));
+            }
+        }
+
+        if (countLaunchedEnemies > 3) {
+            sendEnemies = false;
+            countLaunchedEnemies = 0;
         }
     }
 
@@ -155,55 +213,59 @@ function Game(graphics) {
         keepPlayerWithInBounds();
     }
 
+    function handleClosingTheGame(elapsedTime) {
+        ceaseFire = true;
+
+        if(gameOverInterval > 4000){
+            gameOverInterval = 0;
+            self.gameOver = true;
+            saveScore(CollisionSystem.getEnemiesHit());
+            willAddHighScore = false;
+        }
+        gameOverInterval+= elapsedTime;
+    }
+
     self.update = function (elapsedTime) {
 
+        if (CollisionSystem.isBossDefeated()) {
+            handleClosingTheGame(elapsedTime);
+        }
+
+        // Check for game over
         updatePlayer(elapsedTime);
         CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
         CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
-        updateEnemies();
+        CollisionSystem.didDeflectPlayMissile(enemyMissiles, self.player.missiles);
+        updateEnemies(elapsedTime);
         AnimationSystem.update(elapsedTime);
         ImageParticleSystem.update(elapsedTime);
 
         if(self.player.lives <= 0){ // check for a game over
-            ceaseFire = true;
-
-            if(gameOverInterval > 4000){
-                gameOverInterval = 0;
-                self.gameOver = true;
-                saveScore(CollisionSystem.getEnemiesHit());
-                willAddHighScore = false;
-            }
-            gameOverInterval+= elapsedTime;
+            handleClosingTheGame(elapsedTime);
         }
 
         if (timerInterval > 2500 && !ceaseFire) {
             timerInterval = 0;
             sendEnemies = true;
-            chosenPath = Math.floor((Math.random() * possiblePaths.length));
+            
+            chosenPath = getRandomArbitrary(0, possiblePaths.length);
+            if (chosenPath === 9) {
+                chosenPath--;
+            }
+
             SoundSystem.play('audio/TIE-Fly2.wav');
         } else {
             timerInterval += elapsedTime;
             localInterval += elapsedTime;
-        }
-
-        if (sendEnemies) {
-
-            if (localInterval > 350) {
-                localInterval = 0;
-                countLaunchedEnemies++;
-                enemies.push(new Enemy(possiblePaths[chosenPath], getEnemyFireRate()));
-                if (chosenPath === 7) {
-                    enemies.push(new Enemy(possiblePaths[8], getEnemyFireRate()));
-                }
-            }
-
-            if (countLaunchedEnemies > 3) {
-                sendEnemies = false;
-                countLaunchedEnemies = 0;
-            }
-        }
+        }        
     };
+
+    function getRandomArbitrary(min, max) {
+        // The returned value is no lower than (and may possibly equal) min, 
+        // and is less than (but not equal to) max.
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
 
     function saveScore(score) {
         if (willAddHighScore) {
@@ -275,7 +337,11 @@ function Game(graphics) {
         });
 
         enemies.forEach(function (enemy) {
-            graphics.drawImage(enemy);
+            if (enemy.hasOwnProperty('render')) {
+                enemy.render();
+            } else {
+                graphics.drawImage(enemy);
+            }
         });
 
         enemyMissiles.forEach((missile) => {
@@ -293,6 +359,9 @@ function Game(graphics) {
         // graphics.drawQuadraticCurve(possiblePaths[6]);
         // graphics.drawQuadraticCurve(possiblePaths[7]);
         // graphics.drawQuadraticCurve(possiblePaths[8]);
+        // possiblePaths[9].paths.forEach((path) => {
+        //     graphics.drawQuadraticCurve(path);
+        // })
     };
 
     function keepPlayerWithInBounds() {

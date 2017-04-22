@@ -21,7 +21,27 @@ let Graphics = (function() {
     }
 
     function drawImage(spec) {
+        if (spec.hasOwnProperty('boss')) {
+            drawBoss(spec);
+            return;
+        }
+
         context.drawImage(spec.image, spec.x, spec.y);
+    }
+
+    function drawBoss(spec) {
+        context.drawImage(spec.image, spec.x, spec.y);
+        // let imageData = context.getImageData(spec.x, spec.y, spec.image.width, spec.image.height);
+        // let data = imageData.data;
+
+        // for (let i = 0; i < data.length; i += 4) {
+        //     data[i] += 20; // red
+        //     data[i + 1] += 20; // green 
+        //     data[i + 2] += 20; // blue
+        // }
+
+        // context.putImageData(imageData, spec.x, spec.y);
+        
     }
 
     function drawRotatingImage(spec) {

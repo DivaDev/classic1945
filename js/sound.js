@@ -8,6 +8,7 @@ let SoundSystem = (function() {
     }
 
     function loadAudio() {
+        sounds['audio/Imperial_song_John_Williams'] = loadSound('audio/Imperial_song_John_Williams.mp3');
         sounds['audio/Star_Wars_Theme_John_Williams'] = loadSound('audio/Star_Wars_Theme_John_Williams.mp3');
         console.log('Sound Initialized');
     }
