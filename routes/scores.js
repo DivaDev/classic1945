@@ -5,7 +5,7 @@ let scores = JSON.parse(data);
 exports.all = function(request, response) {
     console.log(scores.all);
     response.send(scores.all);
-}
+};
 
 exports.add = function(request, response) {
     const params = request.params;

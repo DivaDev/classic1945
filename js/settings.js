@@ -4,6 +4,25 @@ let Settings = (function() {
     const rectTopSpace = 30;
     const canvas = document.getElementById('canvas');
 
+    //Local browser storage settings
+    let settings = {},
+        previousSettings = localStorage.getItem('MyGame.settings');
+    if (previousSettings !== null) {
+        settings = JSON.parse(previousSettings);
+    }
+
+    function add(key, value) {
+        console.log("Adding, " + value + " to " + key);
+        settings[key] = value;
+        localStorage['MyGame.settings'] = JSON.stringify(settings);
+    }
+
+    function remove(key) {
+        delete settings[key];
+        localStorage['MyGame.settings'] = JSON.stringify(settings);
+    }
+
+
     // Default controls
     let inputDispatch = {
         'LEFT': {
@@ -167,6 +186,7 @@ let Settings = (function() {
 
         setKeyTextCenter(toggleSound);
 
+        console.log("Adding intial settings to local storage");
         document.addEventListener('keydown', handleKeyDown);
         canvas.addEventListener('click', handleMouseClick);
         canvas.addEventListener('mousemove', handleMouseMove)
@@ -303,14 +323,17 @@ let Settings = (function() {
             case 91: // Safari, Chrome
             case 93: // Safari, Chrome
             case 224: // Firefox
-                break;
+                break
             default:
                 textPlaceHolder.text = "Press New Key";
                 textPlaceHolder.direction = 'NONE';
                 row.keyPosition.text = event.key;
                 inputDispatch[row.direction].keycode = event.keyCode;
-                break
+                add(row.direction, inputDispatch[row.direction].keycode);
+                console.log("Adding reconfigured control to local storage");
+                break;
         }
+
     }
 
     function setKeyTextCenter(row) {
