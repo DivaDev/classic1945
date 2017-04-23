@@ -191,94 +191,48 @@
             "date": "04.21.2017"
         },
         {
-            "user": "null",
-            "score": 0,
+            "user": "Laurel",
+            "score": 20,
             "date": "04.21.2017"
         },
         {
-            "user": "null",
-            "score": 0,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "null",
-            "score": 5,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "asdf",
-            "score": 1,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "fran",
-            "score": 101,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "abc",
-            "score": 101,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "rasdf",
-            "score": 120,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "fran",
-            "score": 115,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "abc",
-            "score": 114,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "asdf",
-            "score": 114,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "asdf",
-            "score": 120,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "k",
-            "score": 116,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "k",
-            "score": 114,
-            "date": "04.21.2017"
-        },
-        {
-            "user": "fran",
-            "score": 114,
+            "user": "Laurel",
+            "score": 35,
             "date": "04.22.2017"
         },
         {
-            "user": "abc",
-            "score": 118,
-            "date": "04.22.2017"
-        },
-        {
-            "user": "abc",
->>>>>>> 673279ce7d9b805c0e20c943aa07b0f33601467f
+            "user": "null",
             "score": 0,
             "date": "04.22.2017"
         },
         {
-<<<<<<< HEAD
+            "user": "null",
+            "score": 0,
+            "date": "04.22.2017"
+        },
+        {
             "user": "Laurel",
             "score": 23,
-=======
-            "user": "abc",
-            "score": 122,
->>>>>>> 673279ce7d9b805c0e20c943aa07b0f33601467f
+            "date": "04.22.2017"
+        },
+        {
+            "user": "Laurel",
+            "score": 13,
+            "date": "04.22.2017"
+        },
+        {
+            "user": "Laurel",
+            "score": 0,
+            "date": "04.22.2017"
+        },
+        {
+            "user": "Laurel",
+            "score": 0,
+            "date": "04.22.2017"
+        },
+        {
+            "user": "Laurel",
+            "score": 14,
             "date": "04.22.2017"
         }
     ]
