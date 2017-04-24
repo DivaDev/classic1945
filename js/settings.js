@@ -4,25 +4,6 @@ let Settings = (function() {
     const rectTopSpace = 30;
     const canvas = document.getElementById('canvas');
 
-    //Local browser storage settings
-    let settings = {},
-        previousSettings = localStorage.getItem('MyGame.settings');
-    if (previousSettings !== null) {
-        settings = JSON.parse(previousSettings);
-    }
-
-    function add(key, value) {
-        console.log("Adding, " + value + " to " + key);
-        settings[key] = value;
-        localStorage['MyGame.settings'] = JSON.stringify(settings);
-    }
-
-    function remove(key) {
-        delete settings[key];
-        localStorage['MyGame.settings'] = JSON.stringify(settings);
-    }
-
-
     // Default controls
     let inputDispatch = {
         'LEFT': {
@@ -41,6 +22,28 @@ let Settings = (function() {
             isOn: true
         }
     };
+
+    //Local browser storage settings
+    let settings = {},
+        previousSettings = localStorage.getItem('MyGame.settings');
+    if (previousSettings !== null) {
+        settings = JSON.parse(previousSettings);
+    }else{
+        let data1 = {text: 'ArrowLeft', keycode:37};
+        add('LEFT', data1);
+        let data2 = {text: 'ArrowRight', keycode:39};
+        add('RIGHT', data2);
+        let data3 = {text: 'ArrowUp', keycode:38};
+        add('UP', data3);
+        let data4 = {text: 'ArrowDown', keycode:40};
+        add('DOWN', data4);
+    }
+
+    function add(key, value) {
+        console.log("Adding, " + value + " to " + key);
+        settings[key] = value;
+        localStorage['MyGame.settings'] = JSON.stringify(settings);
+    }
 
     const defaultFillStyle = 'rgba(225, 225, 225, 0.5)';
     const highlightFillStyle = 'rgba(225, 225, 225, 1.0)';
@@ -65,7 +68,7 @@ let Settings = (function() {
         keyPosition: {
             font: "16px Arial",
             color: "#FFFFFF",
-            text: 'ArrowLeft',
+            text: settings['LEFT'].text,
             x: 175 + 225 / 2 - 30,
             y: 75
         }
@@ -91,7 +94,7 @@ let Settings = (function() {
         keyPosition: {
             font: "16px Arial",
             color: "#FFFFFF",
-            text: 'ArrowRight',
+            text: settings['RIGHT'].text,
             x: 175 + 225 / 2 - 30,
             y: moveLeftRow.text.y + textTopSpace
         }
@@ -117,7 +120,7 @@ let Settings = (function() {
         keyPosition: {
             font: "16px Arial",
             color: "#FFFFFF",
-            text: 'ArrowUp',
+            text: settings['UP'].text,
             x: 175 + 225 / 2 - 30,
             y: moveRightRow.text.y + textTopSpace
         }
@@ -143,7 +146,7 @@ let Settings = (function() {
         keyPosition: {
             font: "16px Arial",
             color: "#FFFFFF",
-            text: 'ArrowDown',
+            text: settings['DOWN'].text,
             x: 175 + 225 / 2 - 30,
             y: moveUpRow.text.y + textTopSpace
         }
@@ -179,6 +182,12 @@ let Settings = (function() {
     const table = [moveLeftRow, moveRightRow, moveUpRow, moveDownRow];
 
     function initialize() {
+
+        inputDispatch['LEFT'].keycode = settings['LEFT'].keycode;
+        inputDispatch['RIGHT'].keycode = settings['RIGHT'].keycode;
+        inputDispatch['DOWN'].keycode = settings['DOWN'].keycode;
+        inputDispatch['UP'].keycode = settings['UP'].keycode;
+
 
         table.forEach((row) => {
             setKeyTextCenter(row);
@@ -323,17 +332,41 @@ let Settings = (function() {
             case 91: // Safari, Chrome
             case 93: // Safari, Chrome
             case 224: // Firefox
-                break
+                break;
             default:
                 textPlaceHolder.text = "Press New Key";
                 textPlaceHolder.direction = 'NONE';
                 row.keyPosition.text = event.key;
                 inputDispatch[row.direction].keycode = event.keyCode;
-                add(row.direction, inputDispatch[row.direction].keycode);
+                let keyData = {
+                    text: row.keyPosition.text,
+                    keycode: inputDispatch[row.direction].keycode
+                };
+                checkForArrowKeys(keyData);
+
+                add(row.direction, keyData);
                 console.log("Adding reconfigured control to local storage");
                 break;
         }
 
+    }
+
+    function checkForArrowKeys(keyData){
+        if(keyData.keycode === 37){
+            keyData.text = "ArrowLeft";
+        }
+
+        if(keyData.keycode === 39){
+            keyData.text = "ArrowRight";
+        }
+
+        if(keyData.keycode === 38){
+            keyData.text = "ArrowUp";
+        }
+
+        if(keyData.keycode === 40){
+            keyData.text = "ArrowDown";
+        }
     }
 
     function setKeyTextCenter(row) {
