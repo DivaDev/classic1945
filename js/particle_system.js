@@ -159,7 +159,7 @@ function ParticleSystem(spec, graphics) {
     return self;
 }
 
-function PlayerEngineEmitter(player) {
+function PlayerEngineEmitter(player) { // this is a particle system
     let self = {};
     let sparks = [];
     let globalTick = 0;

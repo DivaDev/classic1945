@@ -40,7 +40,6 @@ let Settings = (function() {
     }
 
     function add(key, value) {
-        console.log("Adding, " + value + " to " + key);
         settings[key] = value;
         localStorage['MyGame.settings'] = JSON.stringify(settings);
     }
@@ -345,7 +344,6 @@ let Settings = (function() {
                 checkForArrowKeys(keyData);
 
                 add(row.direction, keyData);
-                console.log("Adding reconfigured control to local storage");
                 break;
         }
 

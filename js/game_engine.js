@@ -23,6 +23,7 @@ let GameEngine = (function() {
     let game = new Game(graphics);
     let timerInterval = 0;
     let newGameAnimation = AnimateGameLoading(graphics);
+    
     // SoundSystem.play('audio/Star_Wars_Theme_John_Williams');
 
     let canvas = document.getElementById('canvas');
@@ -113,7 +114,6 @@ let GameEngine = (function() {
     }
 
     function update(elapsedTime) {
-
         if(game.gameOver){
             return;
         }
@@ -122,7 +122,7 @@ let GameEngine = (function() {
             return;
         }
 
-        menu.update();
+        menu.update(elapsedTime, status);
         newGameAnimation.update(elapsedTime);
         if (status === GameStatus.PLAY && newGameAnimation.finished) {
             game.update(elapsedTime);

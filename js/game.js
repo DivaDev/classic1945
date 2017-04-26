@@ -154,7 +154,7 @@ function Game(graphics) {
             }
         }
 
-        if (nextLevelUpAt === 2) {
+        if (nextLevelUpAt === 11) {
             onBossLevel = true;
         }
 

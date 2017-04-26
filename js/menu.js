@@ -34,6 +34,9 @@ let Menu = (function() {
         width: 35,
         height: 40
     };
+
+    const timerToActiveAttractMode = 12000; // 12 seconds
+    let inactivityTimer = 0;
     
     backgroundImage.image.src = "Images/background.png";
     leftShipImage.image.src = "Images/rsz_xwing.png";
@@ -56,6 +59,7 @@ let Menu = (function() {
     }
 
     function handleMouseMove(event) {
+        inactivityTimer = 0;
         let coord = getMousePos(event);
         mouseX = coord.x;
         mouseY = coord.y;
@@ -101,14 +105,40 @@ let Menu = (function() {
     }
 
     function willDisplay() {
-        canvas.addEventListener('mousemove', handleMouseMove)
+        document.addEventListener('mousemove', handleMouseMove)
     }
 
     function removeMouseMoveEvent() {
-        canvas.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mousemove', handleMouseMove);
     }
 
-    function update() {
+    const attractModeImageTag = document.getElementById('attract_mode');
+
+    function toggleAttractMode(show) {
+        if (show) {
+            attractModeImageTag.style.display = 'block';
+            attractModeImageTag.style.visibility = 'visible';
+            canvas.style.display = 'none';
+        } else {
+            attractModeImageTag.style.display = 'none';
+            attractModeImageTag.style.visibility = 'hidden';
+            canvas.style.display = 'block';
+        }
+    }
+
+    function update(elapsedTime, status) {
+
+        if (status === GameStatus.MENU) {
+            if (inactivityTimer > timerToActiveAttractMode) {
+                toggleAttractMode(true);
+                return;
+            } else {
+                toggleAttractMode(false);
+            }
+
+            inactivityTimer += elapsedTime;
+        }
+
         backgroundY += scrollSpeed;
 
         if (backgroundY > 0) {
