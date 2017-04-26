@@ -235,7 +235,7 @@ function Game(graphics) {
         updatePlayer(elapsedTime);
         CollisionSystem.didPlayerMissilesHitEnemy(enemies, self.player.missiles);
         CollisionSystem.didEnemyMissilesHitPlayer(enemyMissiles, self.player);
-        CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player);
+        CollisionSystem.checkPlayerSuperWeaponWithEnemies(enemies, self.player, enemyMissiles);
         CollisionSystem.didDeflectPlayMissile(enemyMissiles, self.player.missiles);
         updateEnemies(elapsedTime);
         AnimationSystem.update(elapsedTime);

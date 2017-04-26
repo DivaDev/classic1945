@@ -102,8 +102,8 @@ let CollisionSystem = (function() {
         return (dx * dx + dy * dy <= (circle.radius * circle.radius));
     }
 
-    function checkPlayerSuperWeaponWithEnemies(enemies, player) {
-        if (enemies.length === 0) {
+    function checkPlayerSuperWeaponWithEnemies(enemies, player, enemyMissiles) {
+        if (enemies.length === 0 && enemyMissiles.length === 0) {
             return; // no enemies on map
         }
 
@@ -129,6 +129,13 @@ let CollisionSystem = (function() {
                 }
             }
         }
+        let enemyMissilesTemp = enemyMissiles;
+        for(let i = 0; i < enemyMissilesTemp.length; i++){
+            if(RectCircleColliding(player.superWeapon, enemyMissilesTemp[i]) && player.superWeapon.isFiring){
+                enemyMissiles.splice(i, 1);
+            }
+        }
+
     }
 
     function didDeflectPlayMissile(enemyMissiles, playerMissiles) {
