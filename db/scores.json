@@ -69,6 +69,11 @@
             "user": "Laurel",
             "score": 43,
             "date": "04.26.2017"
+        },
+        {
+            "user": "Francisco",
+            "score": 210,
+            "date": "04.26.2017"
         }
     ]
 }
