@@ -1,19 +1,31 @@
 # classic1945
+
+
 A bullet-storm style game designed with the game 1945 in mind for CS 5410 at Utah State University
 
-We have the menu system,
-We do have a place for high score,
-reconfig controls
-Gameplay (which includes movement of player, enemies blow up, keep track of score and health, and pause),
-Animation,
-Collision detection,
-we have sound and music,
+# Running the game...
+1. Download the project
+2. From the terminal...
+    - > cd into project
+    - > node server.js
+3. In the browser
+    - Go to http://localhost:3000/
+4. Enjoy the game
 
-So from the requirements we have:
-Gameplay, Menuing, Reconfig Controls, Particle Effects,
-Server Based High score,
-Animation,
-Sounds & Music,
-Collision,
-and OTT Weapon,
-Tile Rendering (must we are thinking of replacing this with enemy AI)
+## Criteria's met
+* Gameplay
+* Menuing
+* Reconfig Controls
+* Served-based high scores
+* Sound & Music
+* Collision Detection
+* OTT Weapon
+
+## Extra Criteria's that were not required but were implemented
+* Animation
+* Attract Mode
+* Pathfinding
+
+#### Notes...
+The attract mode activates after 12 seconds of the mouse not being moved from the menu.
+For pathfinding, the enemies travel a path and their missiles fire at the players location.
