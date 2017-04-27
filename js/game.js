@@ -91,7 +91,7 @@ function Game(graphics) {
             self.player.willMoveUp = true;
         }
 
-        if (event.keyCode === 32) {
+        if (event.keyCode === self.inputDispatch['FIRE'].keycode) {
             willChargeSuperBeam = true;
             fireButtonPressed = true;
         }
@@ -110,7 +110,7 @@ function Game(graphics) {
             self.player.willMoveUp = false;
         }
 
-        if (event.keyCode === 32 && !ceaseFire) { // space
+        if (event.keyCode === self.inputDispatch['FIRE'].keycode && !ceaseFire) { // space
             self.player.fire();
             self.player.fireSuperWeapon();
             willChargeSuperBeam = false;

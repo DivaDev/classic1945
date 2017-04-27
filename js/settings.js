@@ -3,6 +3,8 @@ let Settings = (function() {
     const textTopSpace = 30;
     const rectTopSpace = 30;
     const canvas = document.getElementById('canvas');
+    const defaultFillStyle = 'rgba(225, 225, 225, 0.5)';
+    const highlightFillStyle = 'rgba(225, 225, 225, 1.0)';
 
     // Default controls
     let inputDispatch = {
@@ -20,32 +22,46 @@ let Settings = (function() {
         },
         'SOUND': {
             isOn: true
+        },
+        'FIRE': {
+            'keycode': 32,
         }
     };
 
     //Local browser storage settings
-    let settings = {},
-        previousSettings = localStorage.getItem('MyGame.settings');
+    let settings = {};
+    let previousSettings = localStorage.getItem('MyGame.settings');
     if (previousSettings !== null) {
         settings = JSON.parse(previousSettings);
-    }else{
-        let data1 = {text: 'ArrowLeft', keycode:37};
+    } else {
+        let data1 = { text: 'ArrowLeft', keycode:37 };
+        let data2 = { text: 'ArrowRight', keycode:39 };
+        let data3 = { text: 'ArrowUp', keycode:38 };
+        let data4 = { text: 'ArrowDown', keycode:40 };
         add('LEFT', data1);
-        let data2 = {text: 'ArrowRight', keycode:39};
         add('RIGHT', data2);
-        let data3 = {text: 'ArrowUp', keycode:38};
         add('UP', data3);
-        let data4 = {text: 'ArrowDown', keycode:40};
         add('DOWN', data4);
     }
 
+    function addAnyMissingDataToLocalStorage() {
+        if (settings['SOUND'] == undefined) {
+            const sound = { isOn: true };
+            add('SOUND', sound);
+        }
+
+        if (settings['FIRE'] == undefined) {
+            const fire = { text: 'FIRE', keycode: 32 };
+            add('FIRE', fire);
+        }
+    }
+    
+    addAnyMissingDataToLocalStorage();
+    
     function add(key, value) {
         settings[key] = value;
         localStorage['MyGame.settings'] = JSON.stringify(settings);
     }
-
-    const defaultFillStyle = 'rgba(225, 225, 225, 0.5)';
-    const highlightFillStyle = 'rgba(225, 225, 225, 1.0)';
 
     const moveLeftRow = {
         direction: 'LEFT',
@@ -172,27 +188,62 @@ let Settings = (function() {
         keyPosition: {
             font: "16px Arial",
             color: "#FFFFFF",
-            text: 'ON',
+            text: settings['SOUND'].text,
             x: 175 + 225 / 2 - 30,
             y: moveDownRow.text.y + textTopSpace
         }
     };
 
-    const table = [moveLeftRow, moveRightRow, moveUpRow, moveDownRow];
+    const fireRow = {
+        direction: 'FIRE',
+        isHighlighted: false,
+        text: {
+            font: "16px Arial",
+            color: "#FFFFFF",
+            text: 'Space:',
+            x: 40,
+            y: toggleSound.text.y + textTopSpace
+        },
+        controls: {
+            x: 175,
+            y: toggleSound.controls.y + rectTopSpace,
+            width: 225,
+            height: 22,
+            fillStyle: defaultFillStyle
+        },
+        keyPosition: {
+            font: "16px Arial",
+            color: "#FFFFFF",
+            text: settings['FIRE'].text,
+            x: 175 + 225 / 2 - 30,
+            y: toggleSound.text.y + textTopSpace
+        }
+    };
 
-    function initialize() {
+    const table = [moveLeftRow, moveRightRow, moveUpRow, moveDownRow, fireRow];
 
+    function reset() {
         inputDispatch['LEFT'].keycode = settings['LEFT'].keycode;
         inputDispatch['RIGHT'].keycode = settings['RIGHT'].keycode;
         inputDispatch['DOWN'].keycode = settings['DOWN'].keycode;
         inputDispatch['UP'].keycode = settings['UP'].keycode;
+        inputDispatch['SOUND'] = settings['SOUND'];
+    }
 
+    reset();
 
+    function initialize() {
+        addAnyMissingDataToLocalStorage();
+        reset();
+
+        console.log(settings['SOUND']);
+        console.log(inputDispatch['SOUND']);
+
+        setKeyTextCenter(toggleSound);
         table.forEach((row) => {
             setKeyTextCenter(row);
         });
 
-        setKeyTextCenter(toggleSound);
 
         console.log("Adding intial settings to local storage");
         document.addEventListener('keydown', handleKeyDown);
@@ -222,22 +273,28 @@ let Settings = (function() {
     }
 
     let textPlaceHolder = {
-          text: "Press new key",
+          text: "Press New key",
           direction: 'NONE',
     };
 
     function resetText() {
+        // table.forEach((row) => {
+        //     if (row.direction === textPlaceHolder.direction) {
+        //         const temp = row.keyPosition.text;
+        //         row.keyPosition.text = textPlaceHolder.text;
+        //         textPlaceHolder.text = temp;
+        //         return;
+        //     }
+        // });
+        textPlaceHolder.text = "Press New key";
+        textPlaceHolder.direction = 'NONE';
         table.forEach((row) => {
-            if (row.direction === textPlaceHolder.direction) {
-                const temp = row.keyPosition.text;
-                row.keyPosition.text = textPlaceHolder.text;
-                textPlaceHolder.text = temp;
-                return;
-            }
+            row.keyPosition.text = settings[row.direction].text
         });
     }
 
     function handleMouseClick(event) {
+        
         resetText();
 
         table.forEach(function(row) {
@@ -259,14 +316,10 @@ let Settings = (function() {
             toggleSound.isOn = !toggleSound.isOn;
             inputDispatch['SOUND'].isOn = toggleSound.isOn;
 
-            if (toggleSound.isOn) {
-                SoundSystem.resume();
-            } else {
-                SoundSystem.pause();
-            }
-
             let status = (toggleSound.isOn) ? 'ON': 'OFF';
             toggleSound.keyPosition.text = status;
+            settings['SOUND'].text = status
+            add('SOUND', settings['SOUND']);
         }
     }
 
@@ -336,14 +389,32 @@ let Settings = (function() {
                 textPlaceHolder.text = "Press New Key";
                 textPlaceHolder.direction = 'NONE';
                 row.keyPosition.text = event.key;
-                inputDispatch[row.direction].keycode = event.keyCode;
-                let keyData = {
-                    text: row.keyPosition.text,
-                    keycode: inputDispatch[row.direction].keycode
-                };
-                checkForArrowKeys(keyData);
 
-                add(row.direction, keyData);
+                if (row.keyPosition.text === " ") {
+                    row.keyPosition.text = event.code;                    
+                }
+
+                let keyData = {};
+                if (row.direction === 'NONE') {
+                    // update the fire key
+                    inputDispatch['FIRE'].keycode = event.keyCode;
+                    keyData = {
+                        text: row.keyPosition.text,
+                        keycode: inputDispatch['FIRE'].keycode
+                    };
+
+                    add('FIRE', keyData);
+                } else {
+                    inputDispatch[row.direction].keycode = event.keyCode;
+                    keyData = {
+                        text: row.keyPosition.text,
+                        keycode: inputDispatch[row.direction].keycode
+                    };
+
+                    checkForArrowKeys(keyData);
+                    add(row.direction, keyData);
+                }
+
                 break;
         }
 
@@ -368,6 +439,12 @@ let Settings = (function() {
     }
 
     function setKeyTextCenter(row) {
+
+        if (row.keyPosition.text === undefined) {
+            const text = (row.isOn) ? 'ON' : 'OFF';
+            row.keyPosition.text = text;
+        }
+
         const center = row.controls.x + (row.controls.width / 2);
         row.keyPosition.x = center - (row.keyPosition.text.length * 4);
     }
@@ -391,23 +468,27 @@ let Settings = (function() {
     function render() {
         Graphics.drawText(moveLeftRow.text);
         Graphics.drawRectangle(moveLeftRow.controls);
+        Graphics.drawText(moveLeftRow.keyPosition);
+        
         Graphics.drawText(moveRightRow.text);
         Graphics.drawRectangle(moveRightRow.controls);
+        Graphics.drawText(moveRightRow.keyPosition);        
 
         Graphics.drawText(moveUpRow.text);
         Graphics.drawRectangle(moveUpRow.controls);
+        Graphics.drawText(moveUpRow.keyPosition);        
 
         Graphics.drawText(moveDownRow.text);
         Graphics.drawRectangle(moveDownRow.controls);
-
-        Graphics.drawText(moveLeftRow.keyPosition);
-        Graphics.drawText(moveRightRow.keyPosition);
-        Graphics.drawText(moveUpRow.keyPosition);
         Graphics.drawText(moveDownRow.keyPosition);
 
         Graphics.drawText(toggleSound.text);
         Graphics.drawRectangle(toggleSound.controls);
         Graphics.drawText(toggleSound.keyPosition);
+
+        Graphics.drawText(fireRow.text);
+        Graphics.drawRectangle(fireRow.controls);
+        Graphics.drawText(fireRow.keyPosition);
     }
 
     return {

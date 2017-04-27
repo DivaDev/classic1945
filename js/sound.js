@@ -15,7 +15,7 @@ let SoundSystem = (function() {
     }
 
     function play(sound) {
-
+        console.log(Settings.inputDispatch['SOUND'])
         if (!Settings.inputDispatch['SOUND'].isOn) {
             return;
         }
@@ -47,6 +47,6 @@ let SoundSystem = (function() {
     return {
         play: play,
         pause: pause,
-        resume: resume
+        resume: resume,
     }
 }());
