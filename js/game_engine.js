@@ -32,6 +32,7 @@ let GameEngine = (function() {
         if (game.gameOver) {
             game.reset();
             status = GameStatus.MENU;
+            SoundSystem.play('audio/Star_Wars_Theme_John_Williams');
             menu.willDisplay();
             return;
         }
@@ -70,6 +71,7 @@ let GameEngine = (function() {
                 status = GameStatus.PAUSE;
             } else {
                 status = GameStatus.MENU;
+                SoundSystem.play('audio/Star_Wars_Theme_John_Williams');
                 Settings.willDisappear();
                 menu.willDisplay();
                 game.reset();
