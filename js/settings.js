@@ -236,9 +236,6 @@ let Settings = (function() {
         addAnyMissingDataToLocalStorage();
         reset();
 
-        console.log(settings['SOUND']);
-        console.log(inputDispatch['SOUND']);
-
         setKeyTextCenter(toggleSound);
         table.forEach((row) => {
             setKeyTextCenter(row);
