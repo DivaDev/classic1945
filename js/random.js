@@ -1,5 +1,5 @@
+'use strict';
 let Random = (function() {
-	'use strict';
 	
 	function nextDouble() {
 		return Math.random();
@@ -13,8 +13,6 @@ let Random = (function() {
 	function nextCircleVector() {
 		let angle = Math.random() * 2 * Math.PI;
 		// Angle is always downward so it looks like particle is falling
-		// let min = 0.5;
-        // let max = 2.5;
         // let angle = Math.random() * (max - min) + min;
 		return {
 			x: Math.cos(angle),

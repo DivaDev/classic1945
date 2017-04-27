@@ -65,7 +65,6 @@ const ImageParticleSystem = (function(graphics) {
             if (particles.hasOwnProperty(value)) {
                 particle = particles[value];
                 graphics.drawRotatingImage(particle);
-                // graphics.drawParticleCircle(particle);
             }
         }
     }
@@ -88,7 +87,6 @@ function ParticleSystem(spec, graphics) {
         for(let value in particles) {
             if (particles.hasOwnProperty(value)) {
                 particle = particles[value];
-                // graphics.drawImage(particle);
                 graphics.drawParticleCircle(particle);
             }
         }
@@ -116,7 +114,7 @@ function ParticleSystem(spec, graphics) {
 
     self.reset = function() {
         particles = {};
-    }
+    };
 
     self.createMultipleParticles = function(x, y, n) {
         for(let i = 0; i < n; i++) {
@@ -154,7 +152,7 @@ function ParticleSystem(spec, graphics) {
 			delete particles[removeMe[particle]];
 		}
 		removeMe.length = 0;
-    }
+    };
     
     return self;
 }
@@ -183,14 +181,14 @@ function PlayerEngineEmitter(player) { // this is a particle system
         while (i--) {
             sparks[i].update(globalTick, player.x + player.width / 2, player.y + player.height / 2 + 20);
         }
-    }
+    };
 
     self.renderSparks = function() {
         let i = sparks.length;
         while (i--) {
             sparks[i].render();
         }
-    }
+    };
 
     return self;
 }
@@ -200,7 +198,7 @@ function Spark(playerX, playerY) {
 
     let rand = ((min, max) => {
         return Math.floor((Math.random() * (max - min + 1)) + min);
-    })
+    });
 
     let hueRange = 50;
     let startRadius = rand(1, 12);
@@ -250,7 +248,7 @@ function Spark(playerX, playerY) {
         startLife = 7;
         life = startLife;
         lineWidth = rand(1, 3);
-    }
+    };
     
     self.render = function() {
         const style = 'hsla(' + hue + ', ' + saturation + '%, ' + lightness + '%, ' + alpha + ')';
@@ -262,7 +260,7 @@ function Spark(playerX, playerY) {
             strokeStyle: style,
             lineWidth: lineWidth,
         });
-    }
+    };
 
     self.reset(100, playerX, playerY);
 

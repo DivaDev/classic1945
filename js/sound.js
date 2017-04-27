@@ -1,3 +1,4 @@
+'use strict';
 let SoundSystem = (function() {
     let sounds = {};
 
@@ -9,12 +10,11 @@ let SoundSystem = (function() {
 
     function loadAudio() {
         sounds['audio/Imperial_song_John_Williams'] = loadSound('audio/Imperial_song_John_Williams.mp3');
-       // sounds['audio/Star_Wars_Theme_John_Williams'] = loadSound('audio/Star_Wars_Theme_John_Williams.mp3');
+        sounds['audio/Star_Wars_Theme_John_Williams'] = loadSound('audio/Star_Wars_Theme_John_Williams.mp3');
         console.log('Sound Initialized');
     }
 
     function play(sound) {
-        //return;
 
         if (!Settings.inputDispatch['SOUND'].isOn) {
             return;

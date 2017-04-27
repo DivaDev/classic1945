@@ -35,6 +35,7 @@ function Game(graphics) {
         
         self.player = new Player(graphics.width / 2, graphics.height - 20);
         self.inputDispatch = controls;
+        SoundSystem.pause();
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);

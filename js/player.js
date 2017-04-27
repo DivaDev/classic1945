@@ -79,7 +79,6 @@ function Player(startX, startY) {
                     color: 'rgba(119, 157, 223, 0.5)',
                 }, {
                     offset: 1,
-                    // color: '#1e71e3'
                     color: 'rgba(95, 188, 211, 0.5)'
                 }]
             }
@@ -155,7 +154,7 @@ function Player(startX, startY) {
     self.render = function() {
         playerEngine.renderSparks();
         self.superWeapon.render();
-    }
+    };
 
     const superWeaponStages = {
         'NONE': 0,

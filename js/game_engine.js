@@ -24,7 +24,7 @@ let GameEngine = (function() {
     let timerInterval = 0;
     let newGameAnimation = AnimateGameLoading(graphics);
     
-    // SoundSystem.play('audio/Star_Wars_Theme_John_Williams');
+    SoundSystem.play('audio/Star_Wars_Theme_John_Williams');
 
     let canvas = document.getElementById('canvas');
     canvas.addEventListener('click', function() {

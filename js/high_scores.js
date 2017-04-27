@@ -11,10 +11,9 @@ let HighScores = (function() {
         y: 30,
         width: widthOfTable,
         height: heightOfTable
-    }
+    };
     
-    function update(elapsedTime) {
-    }
+    function update(elapsedTime) {}
 
     function render() {
         Graphics.drawUnFilledRectangle(table);
