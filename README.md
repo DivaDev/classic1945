@@ -3,11 +3,11 @@
 
 A bullet-storm style game designed with the game 1945 in mind for CS 5410 at Utah State University
 
-# Running the game...
+## Running the game...
 1. Download the project
 2. From the terminal...
-    - > cd into project
-    - > node server.js
+    - $ cd into project
+    - $ node server.js
 3. In the browser
     - Go to http://localhost:3000/
 4. Enjoy the game
