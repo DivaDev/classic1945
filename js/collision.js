@@ -1,8 +1,8 @@
 let CollisionSystem = (function() {
 
-    const playerDamage = 20;
+    const playerDamage = 10;
     let enemiesHit = 0;
-    const bossDamage = 30;
+    const bossDamage = 15;
     const pointsForDefeatingBoss = 100;    
     let bossHasBeenDefeated = false;
 
